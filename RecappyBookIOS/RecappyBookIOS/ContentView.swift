@@ -14,33 +14,30 @@ struct ContentView: View {
                     
                     HeaderView()
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 12) {
-                            CategoryButtonView(title: "Polévky", icon: "fork.knife") {
-                                print("Polévky")
-                            }
-                            
-                            CategoryButtonView(title: "Hlavní\njídla", icon: "plate") {
-                                print("Hlavní jídla")
-                            }
-                            
-                            CategoryButtonView(title: "Dezerty", icon: "cupcake") {
-                                print("Dezerty")
-                            }
-                            
-                            CategoryButtonView(title: "Snídaně", icon: "sunrise") {
-                                print("Snídaně")
-                            }
-                            
-                            CategoryButtonView(title: "Ostatní", icon: "takeoutbag.and.cup.and.straw") {
-                                print("Ostatní")
-                            }
+                    HStack(spacing: 8) {
+                        CategoryButtonView(title: "Polévky", icon: "fork.knife") {
+                            print("Polévky")
                         }
-                        .padding(.horizontal, 20)
+                        
+                        CategoryButtonView(title: "Hlavní\njídla", icon: "plate") {
+                            print("Hlavní jídla")
+                        }
+                        
+                        CategoryButtonView(title: "Dezerty", icon: "cupcake") {
+                            print("Dezerty")
+                        }
+                        
+                        CategoryButtonView(title: "Snídaně", icon: "sunrise") {
+                            print("Snídaně")
+                        }
+                        
+                        CategoryButtonView(title: "Ostatní", icon: "takeoutbag.and.cup.and.straw") {
+                            print("Ostatní")
+                        }
                     }
+                    .padding(.horizontal, 10)
                     
                     Group {
-                        
                         if viewModel.isLoading {
                             
                             ProgressView("Načítám recepty...")
@@ -53,24 +50,21 @@ struct ContentView: View {
                             
                         } else {
                             
-                            List(viewModel.recipes) { recipe in
-                                
-                                VStack(alignment: .leading, spacing: 8) {
-                                    
-                                    Text(recipe.title)
-                                        .font(.headline)
-                                    
-                                    Text(recipe.category ?? "Bez kategorie")
-                                        .font(.subheadline)
-                                        .foregroundStyle(.gray)
+                            LazyVStack(spacing: 16) {
+                                ForEach(viewModel.recipes) { recipe in
+                                    NavigationLink {
+                                        RecipeDetailView(recipe: recipe)
+                                    } label: {
+                                        RecipeCardView(recipe: recipe)
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .padding(.vertical, 4)
                             }
-                            .frame(height: 500)
                         }
                     }
                 }
-                .padding(.bottom, 24)
+                .padding(.top, 35)
+                .padding(.bottom, 30)
             }
             .background(AppTheme.background)
             .navigationBarHidden(true)
