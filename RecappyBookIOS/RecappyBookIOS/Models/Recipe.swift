@@ -1,9 +1,10 @@
-import Foundation
+import SwiftUI
 
-struct Recipe: Codable, Identifiable {
-    let id: Int
+struct Recipe: Identifiable, Codable {
+    let id: Int64
     let title: String
-    let description: String
-    let category: String
+    let ingredients: String?
+    let instructions: String?
+    let category: String?
     let imageUrl: String?
 }
