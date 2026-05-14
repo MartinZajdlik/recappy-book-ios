@@ -8,36 +8,72 @@ struct ContentView: View {
         
         NavigationStack {
             
-            Group {
+            ScrollView {
                 
-                if viewModel.isLoading {
+                VStack(spacing: 20) {
                     
-                    ProgressView("Načítám recepty...")
+                    HeaderView()
                     
-                } else if let error = viewModel.errorMessage {
-                    
-                    Text(error)
-                        .foregroundStyle(.red)
-                    
-                } else {
-                    
-                    List(viewModel.recipes) { recipe in
-                        
-                        VStack(alignment: .leading, spacing: 8) {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 12) {
+                            CategoryButtonView(title: "Polévky", icon: "fork.knife") {
+                                print("Polévky")
+                            }
                             
-                            Text(recipe.title)
-                                .font(.headline)
+                            CategoryButtonView(title: "Hlavní\njídla", icon: "plate") {
+                                print("Hlavní jídla")
+                            }
                             
-                            Text(recipe.category ?? "Bez kategorie")
-                                .font(.subheadline)
-                                .foregroundStyle(.gray)
+                            CategoryButtonView(title: "Dezerty", icon: "cupcake") {
+                                print("Dezerty")
+                            }
                             
+                            CategoryButtonView(title: "Snídaně", icon: "sunrise") {
+                                print("Snídaně")
+                            }
+                            
+                            CategoryButtonView(title: "Ostatní", icon: "takeoutbag.and.cup.and.straw") {
+                                print("Ostatní")
+                            }
                         }
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 20)
+                    }
+                    
+                    Group {
+                        
+                        if viewModel.isLoading {
+                            
+                            ProgressView("Načítám recepty...")
+                                .foregroundStyle(.white)
+                            
+                        } else if let error = viewModel.errorMessage {
+                            
+                            Text(error)
+                                .foregroundStyle(.red)
+                            
+                        } else {
+                            
+                            List(viewModel.recipes) { recipe in
+                                
+                                VStack(alignment: .leading, spacing: 8) {
+                                    
+                                    Text(recipe.title)
+                                        .font(.headline)
+                                    
+                                    Text(recipe.category ?? "Bez kategorie")
+                                        .font(.subheadline)
+                                        .foregroundStyle(.gray)
+                                }
+                                .padding(.vertical, 4)
+                            }
+                            .frame(height: 500)
+                        }
                     }
                 }
+                .padding(.bottom, 24)
             }
-            .navigationTitle("RecAPPy Book")
+            .background(AppTheme.background)
+            .navigationBarHidden(true)
         }
         .task {
             await viewModel.loadRecipes()
