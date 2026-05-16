@@ -1,25 +1,35 @@
 import SwiftUI
 
 struct HeaderView: View {
+    let onLogoTap: (() -> Void)?
+
+    init(onLogoTap: (() -> Void)? = nil) {
+        self.onLogoTap = onLogoTap
+    }
+    
     var body: some View {
         VStack(spacing: 22) {
             
             HStack {
-                HStack(spacing: 10) {
-                    Image(systemName: "book.closed")
-                        .font(.system(size: 34))
-                        .foregroundStyle(.white)
-                    
-                    VStack(alignment: .leading, spacing: -2) {
-                        Text("RecAPPy")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundStyle(.white)
+                Button(action: { onLogoTap?() }) {
+                    HStack(spacing: 10) {
+                        Image(systemName: "book.pages.fill")
+                            .font(.system(size: 34, weight: .bold))
+                            .foregroundStyle(Color(white: 0.95))
                         
-                        Text("B O O K")
-                            .font(.system(size: 16, weight: .bold))
-                            .foregroundStyle(.white)
+                        VStack(alignment: .leading, spacing: -2) {
+                            Text("RecAPPy")
+                                .font(.system(size: 26, weight: .heavy))
+                                .foregroundStyle(Color(white: 0.95))
+                            
+                            Text("B O O K")
+                                .font(.system(size: 14, weight: .bold))
+                                .kerning(3)
+                                .foregroundStyle(Color(white: 0.95))
+                        }
                     }
                 }
+                .buttonStyle(.plain)
                 
                 Spacer()
                 

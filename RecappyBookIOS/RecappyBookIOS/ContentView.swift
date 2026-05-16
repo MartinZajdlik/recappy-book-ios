@@ -12,27 +12,30 @@ struct ContentView: View {
                 
                 VStack(spacing: 20) {
                     
-                    HeaderView()
+                    HeaderView(onLogoTap: {
+                        viewModel.clearCategory()
+                    })
                     
                     HStack(spacing: 8) {
+                        
                         CategoryButtonView(title: "Polévky", icon: "fork.knife") {
-                            print("Polévky")
+                            viewModel.selectCategory("Polévky")
                         }
                         
                         CategoryButtonView(title: "Hlavní\njídla", icon: "plate") {
-                            print("Hlavní jídla")
+                            viewModel.selectCategory("Hlavní jídla")
                         }
                         
                         CategoryButtonView(title: "Dezerty", icon: "cupcake") {
-                            print("Dezerty")
+                            viewModel.selectCategory("Dezerty")
                         }
                         
                         CategoryButtonView(title: "Snídaně", icon: "sunrise") {
-                            print("Snídaně")
+                            viewModel.selectCategory("Snídaně")
                         }
                         
                         CategoryButtonView(title: "Ostatní", icon: "takeoutbag.and.cup.and.straw") {
-                            print("Ostatní")
+                            viewModel.selectCategory("Ostatní")
                         }
                     }
                     .padding(.horizontal, 10)
@@ -50,24 +53,60 @@ struct ContentView: View {
                             
                         } else {
                             
-                            LazyVStack(spacing: 16) {
-                                ForEach(viewModel.recipes) { recipe in
-                                    NavigationLink {
-                                        RecipeDetailView(recipe: recipe)
-                                    } label: {
-                                        RecipeCardView(recipe: recipe)
+                            if viewModel.selectedCategory == nil {
+                                if let recipe = viewModel.dailyTip {
+                                    VStack(spacing: 16) {
+                                        Text("TIP na dnešní den")
+                                            .font(.system(size: 20, weight: .heavy))
+                                            .foregroundStyle(AppTheme.green)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                            .padding(.horizontal, 14)
+                                        
+                                        NavigationLink {
+                                            RecipeDetailView(recipe: recipe)
+                                        } label: {
+                                            RecipeCardView(recipe: recipe)
+                                        }
+                                        .buttonStyle(.plain)
                                     }
-                                    .buttonStyle(.plain)
+                                } else {
+                                    // Fallback: if no dailyTip yet, show list
+                                    LazyVStack(spacing: 16) {
+                                        ForEach(viewModel.filteredRecipes) { recipe in
+                                            NavigationLink {
+                                                RecipeDetailView(recipe: recipe)
+                                            } label: {
+                                                RecipeCardView(recipe: recipe)
+                                            }
+                                            .buttonStyle(.plain)
+                                        }
+                                    }
+                                }
+                            } else {
+                                LazyVStack(spacing: 16) {
+                                    ForEach(viewModel.filteredRecipes) { recipe in
+                                        NavigationLink {
+                                            RecipeDetailView(recipe: recipe)
+                                        } label: {
+                                            RecipeCardView(recipe: recipe)
+                                        }
+                                        .buttonStyle(.plain)
+                                    }
                                 }
                             }
                         }
                     }
+                    
                 }
                 .padding(.top, 35)
-                .padding(.bottom, 30)
+                .padding(.bottom, 90)
             }
             .background(AppTheme.background)
             .navigationBarHidden(true)
+            .safeAreaInset(edge: .bottom) {
+                FooterView()
+                    .background(AppTheme.background)
+            }
         }
         .task {
             await viewModel.loadRecipes()
