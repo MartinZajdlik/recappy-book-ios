@@ -18,11 +18,11 @@ struct ContentView: View {
                     
                     HStack(spacing: 8) {
                         
-                        CategoryButtonView(title: "Polévky", icon: "fork.knife") {
+                        CategoryButtonView(title: "Polévky", icon: "cup.and.saucer.fill") {
                             viewModel.selectCategory("Polévky")
                         }
                         
-                        CategoryButtonView(title: "Hlavní\njídla", icon: "plate.fill") {
+                        CategoryButtonView(title: "Hlavní\njídla", icon: "fork.knife.circle") {
                             viewModel.selectCategory("Hlavní jídla")
                         }
                         
@@ -30,7 +30,7 @@ struct ContentView: View {
                             viewModel.selectCategory("Dezerty")
                         }
                         
-                        CategoryButtonView(title: "Snídaně", icon: "baguette") {
+                        CategoryButtonView(title: "Snídaně", icon: "frying.pan.fill") {
                             viewModel.selectCategory("Snídaně")
                         }
                         

@@ -33,8 +33,25 @@ struct RecipeDetailView: View {
                     .font(.title3.bold())
                     .foregroundStyle(AppTheme.green)
                 
-                Text(recipe.ingredients ?? "")
-                    .foregroundStyle(.white)
+                VStack(alignment: .leading, spacing: 8) {
+                    
+                    ForEach(
+                        (recipe.ingredients ?? "")
+                            .components(separatedBy: ",")
+                            .filter { !$0.isEmpty },
+                        id: \.self
+                    ) { ingredient in
+                        
+                        HStack(alignment: .top) {
+                            
+                            Text("•")
+                                .foregroundStyle(AppTheme.green)
+                            
+                            Text(ingredient)
+                                .foregroundStyle(.white)
+                        }
+                    }
+                }
                 
                 Text("Postup")
                     .font(.title3.bold())
