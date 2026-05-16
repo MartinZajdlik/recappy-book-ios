@@ -22,15 +22,15 @@ struct ContentView: View {
                             viewModel.selectCategory("Polévky")
                         }
                         
-                        CategoryButtonView(title: "Hlavní\njídla", icon: "plate") {
+                        CategoryButtonView(title: "Hlavní\njídla", icon: "plate.fill") {
                             viewModel.selectCategory("Hlavní jídla")
                         }
                         
-                        CategoryButtonView(title: "Dezerty", icon: "cupcake") {
+                        CategoryButtonView(title: "Dezerty", icon: "birthday.cake") {
                             viewModel.selectCategory("Dezerty")
                         }
                         
-                        CategoryButtonView(title: "Snídaně", icon: "sunrise") {
+                        CategoryButtonView(title: "Snídaně", icon: "baguette") {
                             viewModel.selectCategory("Snídaně")
                         }
                         
@@ -58,7 +58,7 @@ struct ContentView: View {
                                     VStack(spacing: 16) {
                                         Text("TIP na dnešní den")
                                             .font(.system(size: 20, weight: .heavy))
-                                            .foregroundStyle(AppTheme.green)
+                                            .foregroundStyle(AppTheme.blue)
                                             .frame(maxWidth: .infinity, alignment: .leading)
                                             .padding(.horizontal, 14)
                                         
