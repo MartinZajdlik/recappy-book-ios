@@ -19,7 +19,7 @@ struct FooterView: View {
         }
         .multilineTextAlignment(.center)
         .padding(.top, 8)
-        .padding(.bottom, 4)
+        .padding(.bottom, 12)
     }
 }
 
