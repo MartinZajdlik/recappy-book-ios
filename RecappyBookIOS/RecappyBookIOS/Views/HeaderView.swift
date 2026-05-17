@@ -1,10 +1,21 @@
 import SwiftUI
 
 struct HeaderView: View {
+    let username: String?
+    let showUserControls: Bool
     let onLogoTap: (() -> Void)?
-
-    init(onLogoTap: (() -> Void)? = nil) {
+    let onLogoutTap: (() -> Void)?
+    
+    init(
+        username: String? = nil,
+        showUserControls: Bool = false,
+        onLogoTap: (() -> Void)? = nil,
+        onLogoutTap: (() -> Void)? = nil
+    ) {
+        self.username = username
+        self.showUserControls = showUserControls
         self.onLogoTap = onLogoTap
+        self.onLogoutTap = onLogoutTap
     }
     
     var body: some View {
@@ -33,19 +44,21 @@ struct HeaderView: View {
                 
                 Spacer()
                 
-                Text("user")
+                if showUserControls {
+                    Text(username ?? "")
+                        .font(.headline)
+                        .foregroundStyle(AppTheme.green)
+                    
+                    Button("Odhlásit") {
+                        onLogoutTap?()
+                    }
                     .font(.headline)
-                    .foregroundStyle(AppTheme.green)
-                
-                Button("Odhlásit") {
-                    print("Odhlášení zatím později")
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 10)
+                    .background(Color.blue)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
                 }
-                .font(.headline)
-                .foregroundStyle(.white)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(Color.blue)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
                 
                 Text("👨‍🍳")
                     .font(.title2)

@@ -9,9 +9,17 @@ import SwiftUI
 
 @main
 struct RecappyBookIOSApp: App {
+    
+    @StateObject private var authViewModel = AuthViewModel()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            
+            if authViewModel.isLoggedIn {
+                ContentView(authViewModel: authViewModel)
+            } else {
+                AuthView(viewModel: authViewModel)
+            }
         }
     }
 }

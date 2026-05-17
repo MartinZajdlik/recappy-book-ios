@@ -2,6 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     
+    @ObservedObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = RecipeViewModel()
     
     var body: some View {
@@ -12,9 +13,16 @@ struct ContentView: View {
                 
                 VStack(spacing: 20) {
                     
-                    HeaderView(onLogoTap: {
-                        viewModel.clearCategory()
-                    })
+                    HeaderView(
+                        username: UserDefaults.standard.string(forKey: "currentUsername"),
+                        showUserControls: true,
+                        onLogoTap: {
+                            viewModel.clearCategory()
+                        },
+                        onLogoutTap: {
+                            authViewModel.logout()
+                        }
+                    )
                     
                     HStack(spacing: 8) {
                         
@@ -115,5 +123,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(authViewModel: AuthViewModel())
 }

@@ -8,4 +8,5 @@ enum AppTheme {
     static let blue = Color(red: 45/255, green: 170/255, blue: 255/255)
     static let text = Color.white
     static let mutedText = Color.gray
+    static let accent = green
 }
