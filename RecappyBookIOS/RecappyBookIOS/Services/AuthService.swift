@@ -123,6 +123,35 @@ final class AuthService {
         }
     }
     
+    // MARK: - CURRENT USER
+
+    func getCurrentUser() async throws -> UserInfoResponse {
+        
+        let request = try APIClient.shared.makeRequest(
+            path: "/auth/me",
+            method: "GET",
+            requiresAuth: true
+        )
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            throw NSError(
+                domain: "",
+                code: httpResponse.statusCode,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Neautorizováno."
+                ]
+            )
+        }
+        
+        return try JSONDecoder().decode(UserInfoResponse.self, from: data)
+    }
+    
     
     
     

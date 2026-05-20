@@ -24,3 +24,8 @@ struct ResetPasswordRequest: Codable {
     let token: String
     let newPassword: String
 }
+
+struct UserInfoResponse: Codable {
+    let username: String
+    let role: String
+}

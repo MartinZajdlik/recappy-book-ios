@@ -1,4 +1,4 @@
-import SwiftUI
+import Foundation
 
 final class APIService {
     
@@ -6,22 +6,24 @@ final class APIService {
     
     private init() {}
     
-    private let baseURL = "https://recappy-book.onrender.com"
-    
     func fetchRecipes() async throws -> [Recipe] {
-        guard let url = URL(string: "\(baseURL)/recepty") else {
-            throw URLError(.badURL)
-        }
         
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let request = try APIClient.shared.makeRequest(
+            path: "/recepty",
+            method: "GET",
+            requiresAuth: false
+        )
         
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }
         
-        let recipes = try JSONDecoder().decode([Recipe].self, from: data)
-        return recipes
+        guard httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
         
+        return try JSONDecoder().decode([Recipe].self, from: data)
     }
-
 }

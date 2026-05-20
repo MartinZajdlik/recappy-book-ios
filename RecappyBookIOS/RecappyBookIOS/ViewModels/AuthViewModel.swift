@@ -126,12 +126,28 @@ final class AuthViewModel: ObservableObject {
     
     private func loadSession() {
         
-        if let savedToken = UserDefaults.standard.string(forKey: "jwtToken") {
-            
-            token = savedToken
-            role = UserDefaults.standard.string(forKey: "userRole")
-            
-            isLoggedIn = true
+        guard let savedToken = UserDefaults.standard.string(forKey: "jwtToken") else {
+            return
+        }
+        
+        token = savedToken
+        
+        Task {
+            do {
+                
+                let user = try await AuthService.shared.getCurrentUser()
+                
+                role = user.role
+                
+                UserDefaults.standard.set(user.username, forKey: "currentUsername")
+                UserDefaults.standard.set(user.role, forKey: "userRole")
+                
+                isLoggedIn = true
+                
+            } catch {
+                
+                logout()
+            }
         }
     }
 }
