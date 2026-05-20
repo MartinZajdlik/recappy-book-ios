@@ -4,6 +4,7 @@ struct AuthView: View {
     
     @ObservedObject var viewModel: AuthViewModel
     @State private var isRegisterMode = false
+    @State private var showForgotPassword = false
     
     var body: some View {
         VStack(spacing: 24) {
@@ -82,9 +83,38 @@ struct AuthView: View {
             }
             
             Button("Zapomněli jste heslo?") {
-                // doděláme v dalším kroku
+                showForgotPassword.toggle()
             }
-            .foregroundStyle(.blue)
+            .foregroundStyle(AppTheme.blue)
+            
+            if showForgotPassword {
+                VStack(spacing: 12) {
+                    TextField("E-mail pro reset hesla", text: $viewModel.email)
+                        .textFieldStyle(.plain)
+                        .keyboardType(.emailAddress)
+                        .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
+                        .padding()
+                        .background(AppTheme.card)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .foregroundStyle(AppTheme.text)
+                    
+                    Button {
+                        Task {
+                            await viewModel.forgotPassword()
+                        }
+                    } label: {
+                        Text("Poslat odkaz pro reset")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(AppTheme.blue)
+                            .foregroundStyle(.white)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                    }
+                    .disabled(viewModel.isLoading)
+                }
+            }
             
             Spacer()
             

@@ -86,6 +86,26 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
+    // MARK: - FORGOT PASSWORD
+
+    func forgotPassword() async {
+        
+        errorMessage = ""
+        successMessage = ""
+        isLoading = true
+        
+        defer {
+            isLoading = false
+        }
+        
+        do {
+            try await AuthService.shared.forgotPassword(email: email)
+            successMessage = "Pokud e-mail existuje, poslali jsme odkaz pro reset hesla."
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
+    
     
     // MARK: - LOGOUT
     

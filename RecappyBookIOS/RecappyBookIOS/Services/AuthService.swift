@@ -91,4 +91,39 @@ final class AuthService {
         
         return message
     }
+    // MARK: - FORGOT PASSWORD
+
+    func forgotPassword(email: String) async throws {
+        
+        guard let url = URL(string: "\(baseURL)/auth/forgot") else {
+            throw URLError(.badURL)
+        }
+        
+        let body = ForgotPasswordRequest(email: email)
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(body)
+        
+        let (_, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            throw NSError(
+                domain: "",
+                code: httpResponse.statusCode,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Nepodařilo se odeslat reset hesla."
+                ]
+            )
+        }
+    }
+    
+    
+    
+    
 }
