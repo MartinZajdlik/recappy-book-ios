@@ -78,19 +78,7 @@ struct AdminView: View {
     }
     
     private var adminUsersSection: some View {
-        VStack(spacing: 18) {
-            
-            Text("Správa uživatelů")
-                .font(.title2.bold())
-                .foregroundStyle(AppTheme.text)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-            
-            Text("Tady později zobrazíme seznam uživatelů a jejich role.")
-                .foregroundStyle(AppTheme.mutedText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-        }
+        AdminUsersView()
     }
     
     private func adminTabButton(title: String, tab: AdminTab) -> some View {
