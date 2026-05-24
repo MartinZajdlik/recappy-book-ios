@@ -22,7 +22,7 @@ final class APIClient {
         request.httpMethod = method
         
         if requiresAuth {
-            guard let token = UserDefaults.standard.string(forKey: "jwtToken") else {
+            guard let token = KeychainService.shared.getToken() else {
                 throw NSError(
                     domain: "",
                     code: 401,

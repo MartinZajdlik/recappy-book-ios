@@ -46,7 +46,7 @@ final class AuthViewModel: ObservableObject {
             token = response.token
             role = response.role
             
-            UserDefaults.standard.set(response.token, forKey: "jwtToken")
+            KeychainService.shared.saveToken(response.token)
             UserDefaults.standard.set(response.role, forKey: "userRole")
             UserDefaults.standard.set(username, forKey: "currentUsername")
             
@@ -114,7 +114,14 @@ final class AuthViewModel: ObservableObject {
         token = nil
         role = nil
         
-        UserDefaults.standard.removeObject(forKey: "jwtToken")
+        username = ""
+        password = ""
+        email = ""
+        
+        errorMessage = ""
+        successMessage = ""
+        
+        KeychainService.shared.deleteToken()
         UserDefaults.standard.removeObject(forKey: "userRole")
         UserDefaults.standard.removeObject(forKey: "currentUsername")
         
@@ -126,7 +133,7 @@ final class AuthViewModel: ObservableObject {
     
     private func loadSession() {
         
-        guard let savedToken = UserDefaults.standard.string(forKey: "jwtToken") else {
+        guard let savedToken = KeychainService.shared.getToken() else {
             return
         }
         

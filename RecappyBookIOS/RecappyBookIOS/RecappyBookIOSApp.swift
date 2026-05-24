@@ -16,7 +16,13 @@ struct RecappyBookIOSApp: App {
         WindowGroup {
             
             if authViewModel.isLoggedIn {
-                ContentView(authViewModel: authViewModel)
+                
+                if authViewModel.role == "ROLE_ADMIN" {
+                    AdminView(authViewModel: authViewModel)
+                } else {
+                    ContentView(authViewModel: authViewModel)
+                }
+                
             } else {
                 AuthView(viewModel: authViewModel)
             }
