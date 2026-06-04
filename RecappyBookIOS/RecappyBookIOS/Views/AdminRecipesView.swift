@@ -124,6 +124,15 @@ struct AdminRecipesView: View {
                         await viewModel.loadRecipes()
                     }
                 }
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            showAddForm = false
+                        } label: {
+                            Label("Zpět", systemImage: "chevron.left")
+                        }
+                    }
+                }
             }
         }
 

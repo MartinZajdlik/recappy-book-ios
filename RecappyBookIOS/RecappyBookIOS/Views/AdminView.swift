@@ -36,7 +36,7 @@ struct AdminView: View {
                         adminUsersSection
                     }
                 }
-                .padding(.top, 35)
+                .padding(.top, 0)
                 .padding(.bottom, 90)
             }
             .background(AppTheme.background)

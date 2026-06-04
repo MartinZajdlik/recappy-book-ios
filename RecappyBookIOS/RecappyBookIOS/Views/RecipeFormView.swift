@@ -1,4 +1,5 @@
 import SwiftUI
+import PhotosUI
 
 struct RecipeFormView: View {
     
@@ -13,6 +14,8 @@ struct RecipeFormView: View {
     @State private var showSaveAlert = false
     @State private var errorMessage: String?
     @State private var isSaving = false
+    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var selectedImageData: Data?
     
     let categories = ["Polévky", "Hlavní jídla", "Dezerty", "Snídaně", "Ostatní"]
     
@@ -79,6 +82,29 @@ struct RecipeFormView: View {
                         }
                     }
                 
+                PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                    HStack {
+                        Image(systemName: "camera")
+                        Text(selectedImageData == nil ? "Vybrat obrázek" : "Obrázek vybrán")
+                    }
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(AppTheme.card)
+                    .foregroundStyle(AppTheme.text)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                }
+
+                if let selectedImageData,
+                   let uiImage = UIImage(data: selectedImageData) {
+                    
+                    Image(uiImage: uiImage)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(height: 180)
+                        .clipShape(RoundedRectangle(cornerRadius: 14))
+                }
+                
                 Button {
                     showSaveAlert = true
                 } label: {
@@ -100,6 +126,13 @@ struct RecipeFormView: View {
                 category = recipe.category ?? "Polévky"
                 ingredients = recipe.ingredients ?? ""
                 instructions = recipe.instructions ?? ""
+            }
+        }
+        .onChange(of: selectedPhoto) { _, newItem in
+            Task {
+                if let data = try? await newItem?.loadTransferable(type: Data.self) {
+                    selectedImageData = data
+                }
             }
         }
         .alert(isEditMode ? "Uložit změny?" : "Přidat recept?", isPresented: $showSaveAlert) {
@@ -130,14 +163,16 @@ struct RecipeFormView: View {
                     title: title,
                     category: category,
                     ingredients: ingredients,
-                    instructions: instructions
+                    instructions: instructions,
+                    imageData: selectedImageData
                 )
             } else {
                 _ = try await APIService.shared.createRecipe(
                     title: title,
                     category: category,
                     ingredients: ingredients,
-                    instructions: instructions
+                    instructions: instructions,
+                    imageData: selectedImageData
                 )
             }
             

@@ -48,7 +48,9 @@ final class APIService {
         title: String,
         category: String,
         ingredients: String,
-        instructions: String
+        instructions: String,
+        imageData: Data?
+        
     ) async throws -> Recipe {
         
         let boundary = UUID().uuidString
@@ -69,7 +71,8 @@ final class APIService {
             title: title,
             category: category,
             ingredients: ingredients,
-            instructions: instructions
+            instructions: instructions,
+            imageData: imageData
         )
         
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -87,7 +90,8 @@ final class APIService {
         title: String,
         category: String,
         ingredients: String,
-        instructions: String
+        instructions: String,
+        imageData: Data?
     ) async throws -> Recipe {
         
         let boundary = UUID().uuidString
@@ -108,7 +112,8 @@ final class APIService {
             title: title,
             category: category,
             ingredients: ingredients,
-            instructions: instructions
+            instructions: instructions,
+            imageData: imageData
         )
         
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -126,7 +131,8 @@ final class APIService {
         title: String,
         category: String,
         ingredients: String,
-        instructions: String
+        instructions: String,
+        imageData: Data?
     ) -> Data {
         
         var data = Data()
@@ -141,6 +147,14 @@ final class APIService {
         appendField(name: "category", value: category)
         appendField(name: "ingredients", value: ingredients)
         appendField(name: "instructions", value: instructions)
+        
+        if let imageData {
+            data.append("--\(boundary)\r\n".data(using: .utf8)!)
+            data.append("Content-Disposition: form-data; name=\"image\"; filename=\"recipe.jpg\"\r\n".data(using: .utf8)!)
+            data.append("Content-Type: image/jpeg\r\n\r\n".data(using: .utf8)!)
+            data.append(imageData)
+            data.append("\r\n".data(using: .utf8)!)
+        }
         
         data.append("--\(boundary)--\r\n".data(using: .utf8)!)
         
