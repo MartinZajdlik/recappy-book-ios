@@ -32,6 +32,8 @@ struct HeaderView: View {
                             Text("RecAPPy")
                                 .font(.system(size: 26, weight: .heavy))
                                 .foregroundStyle(Color(white: 0.95))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
                             
                             Text("B O O K")
                                 .font(.system(size: 14, weight: .bold))
@@ -45,23 +47,32 @@ struct HeaderView: View {
                 Spacer()
                 
                 if showUserControls {
-                    Text(username ?? "")
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.green)
-                    
-                    Button("Odhlásit") {
-                        onLogoutTap?()
+                    HStack(spacing: 6) {
+                        Text("👨‍🍳")
+                            .font(.title3)
+                        
+                        Text(username ?? "")
+                            .font(.caption.weight(.bold))
+                            .foregroundStyle(AppTheme.green)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                            .frame(maxWidth: 70)
+                        
+                        Button {
+                            onLogoutTap?()
+                        } label: {
+                            Image(systemName: "rectangle.portrait.and.arrow.right")
+                                .font(.system(size: 15, weight: .bold))
+                                .foregroundStyle(.white)
+                                .padding(8)
+                                .background(AppTheme.blue)
+                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
                     }
-                    .font(.headline)
-                    .foregroundStyle(.white)
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 10)
-                    .background(Color.blue)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                } else {
+                    Text("👨‍🍳")
+                        .font(.title2)
                 }
-                
-                Text("👨‍🍳")
-                    .font(.title2)
             }
             
             Text("„Někteří lidé jedí, aby žili. My žijeme, abychom jedli.“")
