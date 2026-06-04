@@ -44,6 +44,109 @@ final class APIService {
         }
     }
     
+    func createRecipe(
+        title: String,
+        category: String,
+        ingredients: String,
+        instructions: String
+    ) async throws -> Recipe {
+        
+        let boundary = UUID().uuidString
+        
+        var request = try APIClient.shared.makeRequest(
+            path: "/recepty",
+            method: "POST",
+            requiresAuth: true
+        )
+        
+        request.setValue(
+            "multipart/form-data; boundary=\(boundary)",
+            forHTTPHeaderField: "Content-Type"
+        )
+        
+        request.httpBody = makeRecipeMultipartBody(
+            boundary: boundary,
+            title: title,
+            category: category,
+            ingredients: ingredients,
+            instructions: instructions
+        )
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return try JSONDecoder().decode(Recipe.self, from: data)
+    }
+
+    func updateRecipe(
+        id: Int64,
+        title: String,
+        category: String,
+        ingredients: String,
+        instructions: String
+    ) async throws -> Recipe {
+        
+        let boundary = UUID().uuidString
+        
+        var request = try APIClient.shared.makeRequest(
+            path: "/recepty/\(id)",
+            method: "PUT",
+            requiresAuth: true
+        )
+        
+        request.setValue(
+            "multipart/form-data; boundary=\(boundary)",
+            forHTTPHeaderField: "Content-Type"
+        )
+        
+        request.httpBody = makeRecipeMultipartBody(
+            boundary: boundary,
+            title: title,
+            category: category,
+            ingredients: ingredients,
+            instructions: instructions
+        )
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+        
+        return try JSONDecoder().decode(Recipe.self, from: data)
+    }
+
+    private func makeRecipeMultipartBody(
+        boundary: String,
+        title: String,
+        category: String,
+        ingredients: String,
+        instructions: String
+    ) -> Data {
+        
+        var data = Data()
+        
+        func appendField(name: String, value: String) {
+            data.append("--\(boundary)\r\n".data(using: .utf8)!)
+            data.append("Content-Disposition: form-data; name=\"\(name)\"\r\n\r\n".data(using: .utf8)!)
+            data.append("\(value)\r\n".data(using: .utf8)!)
+        }
+        
+        appendField(name: "title", value: title)
+        appendField(name: "category", value: category)
+        appendField(name: "ingredients", value: ingredients)
+        appendField(name: "instructions", value: instructions)
+        
+        data.append("--\(boundary)--\r\n".data(using: .utf8)!)
+        
+        return data
+    }
+    
 
     func fetchAdminUsers() async throws -> [AdminUser] {
         

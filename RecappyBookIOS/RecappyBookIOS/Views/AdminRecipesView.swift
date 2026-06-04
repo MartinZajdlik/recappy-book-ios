@@ -6,12 +6,14 @@ struct AdminRecipesView: View {
     @State private var recipeToDelete: Recipe?
     @State private var showDeleteAlert = false
     @State private var recipeToShow: Recipe?
+    @State private var showAddForm = false
+    @State private var recipeToEdit: Recipe?
     
     var body: some View {
         VStack(spacing: 18) {
             
             Button {
-                print("Přidat recept později")
+                showAddForm = true
             } label: {
                 Text("+ Přidat recept")
                     .font(.headline)
@@ -73,7 +75,7 @@ struct AdminRecipesView: View {
                             recipeToShow = recipe
                         },
                         onEdit: {
-                            print("Upravit recept později: \(recipe.title)")
+                            recipeToEdit = recipe
                         },
                         onDelete: {
                             recipeToDelete = recipe
@@ -113,6 +115,25 @@ struct AdminRecipesView: View {
                             }
                         }
                     }
+            }
+        }
+        .sheet(isPresented: $showAddForm) {
+            NavigationStack {
+                RecipeFormView(recipe: nil) {
+                    Task {
+                        await viewModel.loadRecipes()
+                    }
+                }
+            }
+        }
+
+        .sheet(item: $recipeToEdit) { recipe in
+            NavigationStack {
+                RecipeFormView(recipe: recipe) {
+                    Task {
+                        await viewModel.loadRecipes()
+                    }
+                }
             }
         }
     }
