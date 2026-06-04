@@ -41,4 +41,13 @@ final class AdminRecipesViewModel: ObservableObject {
     func clearCategory() {
         selectedCategory = nil
     }
+    
+    func deleteRecipe(_ recipe: Recipe) async {
+        do {
+            try await APIService.shared.deleteRecipe(recipeId: recipe.id)
+            await loadRecipes()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
 }

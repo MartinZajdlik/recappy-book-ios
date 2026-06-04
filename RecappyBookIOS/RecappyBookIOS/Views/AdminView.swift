@@ -49,32 +49,7 @@ struct AdminView: View {
     }
     
     private var adminRecipesSection: some View {
-        VStack(spacing: 18) {
-            
-            Button {
-                print("Přidat recept později")
-            } label: {
-                Text("+ Přidat recept")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(AppTheme.green)
-                    .foregroundStyle(.black)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            .padding(.horizontal)
-            
-            Text("Správa receptů")
-                .font(.title2.bold())
-                .foregroundStyle(AppTheme.text)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-            
-            Text("Tady později zobrazíme kategorie, editaci a mazání receptů.")
-                .foregroundStyle(AppTheme.mutedText)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal)
-        }
+        AdminRecipesView()
     }
     
     private var adminUsersSection: some View {
