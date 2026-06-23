@@ -4,6 +4,7 @@ struct AdminView: View {
     
     @ObservedObject var authViewModel: AuthViewModel
     @State private var selectedTab: AdminTab = .recipes
+    @State private var showUserMenu = false
     
     enum AdminTab {
         case recipes
@@ -19,9 +20,10 @@ struct AdminView: View {
                         username: UserDefaults.standard.string(forKey: "currentUsername"),
                         showUserControls: true,
                         onLogoTap: {},
-                        onLogoutTap: {
-                            authViewModel.logout()
+                        onUserMenuTap: {
+                            showUserMenu = true
                         }
+                       
                     )
                     
                     HStack(spacing: 12) {
@@ -46,6 +48,25 @@ struct AdminView: View {
                     .background(AppTheme.background)
             }
         }
+        .sheet(isPresented: $showUserMenu) {
+            UserMenuView(
+                username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",
+                onAddRecipe: {
+                    print("Admin přidat recept později")
+                },
+                onMyRecipes: {
+                    print("Moje recepty později")
+                },
+                onDeleteProfile: {
+                    print("Smazání profilu později")
+                },
+                onLogout: {
+                    authViewModel.logout()
+                }
+            )
+        }
+        
+        
     }
     
     private var adminRecipesSection: some View {

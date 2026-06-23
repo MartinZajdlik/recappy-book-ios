@@ -116,6 +116,18 @@ struct RecipeFormView: View {
                         .foregroundStyle(.black)
                         .clipShape(RoundedRectangle(cornerRadius: 12))
                 }
+
+                if isSaving {
+                    ProgressView("Ukládám recept...")
+                        .foregroundStyle(AppTheme.text)
+                }
+
+                if let errorMessage {
+                    Text(errorMessage)
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
             }
             .padding()
         }
@@ -148,15 +160,15 @@ struct RecipeFormView: View {
         }
     }
     
-    private func saveRecipe() async {
-        isSaving = true
-        errorMessage = nil
-        
-        defer {
-            isSaving = false
-        }
-        
-        do {
+        private func saveRecipe() async {
+            isSaving = true
+            errorMessage = nil
+            
+            defer {
+                isSaving = false
+            }
+            
+            do {
             if let recipe {
                 _ = try await APIService.shared.updateRecipe(
                     id: recipe.id,

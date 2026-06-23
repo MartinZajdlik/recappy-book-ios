@@ -77,9 +77,18 @@ final class APIService {
         
         let (data, response) = try await URLSession.shared.data(for: request)
         
-        guard let httpResponse = response as? HTTPURLResponse,
-              httpResponse.statusCode == 200 else {
+        guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
+        }
+
+        guard httpResponse.statusCode == 200 else {
+            throw NSError(
+                domain: "",
+                code: httpResponse.statusCode,
+                userInfo: [
+                    NSLocalizedDescriptionKey: "Server vrátil chybu \(httpResponse.statusCode)"
+                ]
+            )
         }
         
         return try JSONDecoder().decode(Recipe.self, from: data)

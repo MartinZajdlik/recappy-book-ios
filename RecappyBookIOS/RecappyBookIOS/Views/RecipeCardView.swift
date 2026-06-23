@@ -50,7 +50,8 @@ struct RecipeCardView: View {
             ingredients: "Maso",
             instructions: "Postup",
             category: "Hlavní jídla",
-            imageUrl: nil
+            imageUrl: nil,
+            authorUsername: "martin"
         )
     )
     .background(AppTheme.background)

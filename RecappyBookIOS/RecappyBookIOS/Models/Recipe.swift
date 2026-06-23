@@ -7,4 +7,5 @@ struct Recipe: Identifiable, Codable {
     let instructions: String?
     let category: String?
     let imageUrl: String?
+    let authorUsername: String?
 }

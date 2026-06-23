@@ -4,18 +4,18 @@ struct HeaderView: View {
     let username: String?
     let showUserControls: Bool
     let onLogoTap: (() -> Void)?
-    let onLogoutTap: (() -> Void)?
+    let onUserMenuTap: (() -> Void)?
     
     init(
         username: String? = nil,
         showUserControls: Bool = false,
         onLogoTap: (() -> Void)? = nil,
-        onLogoutTap: (() -> Void)? = nil
+        onUserMenuTap: (() -> Void)? = nil
     ) {
         self.username = username
         self.showUserControls = showUserControls
         self.onLogoTap = onLogoTap
-        self.onLogoutTap = onLogoutTap
+        self.onUserMenuTap = onUserMenuTap
     }
     
     var body: some View {
@@ -47,29 +47,39 @@ struct HeaderView: View {
                 Spacer()
                 
                 if showUserControls {
-                    HStack(spacing: 6) {
-                        Text("👨‍🍳")
-                            .font(.title3)
+                    
+                    Button {
+                        onUserMenuTap?()
+                    } label: {
                         
-                        Text(username ?? "")
-                            .font(.caption.weight(.bold))
-                            .foregroundStyle(AppTheme.green)
-                            .lineLimit(1)
-                            .truncationMode(.tail)
-                            .frame(maxWidth: 70)
-                        
-                        Button {
-                            onLogoutTap?()
-                        } label: {
-                            Image(systemName: "rectangle.portrait.and.arrow.right")
-                                .font(.system(size: 15, weight: .bold))
-                                .foregroundStyle(.white)
-                                .padding(8)
-                                .background(AppTheme.blue)
-                                .clipShape(RoundedRectangle(cornerRadius: 8))
+                        HStack(spacing: 8) {
+                            
+                            Text("👨‍🍳")
+                                .font(.title3)
+                            
+                            Text(username ?? "")
+                                .font(.caption.weight(.bold))
+                                .lineLimit(1)
+                                .truncationMode(.tail)
+                                .frame(maxWidth: 90)
+                            
+                            Image(systemName: "line.3.horizontal")
+                                .font(.caption)
                         }
+                        .foregroundStyle(AppTheme.green)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 8)
+                        .background(AppTheme.card)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 10)
+                                .stroke(AppTheme.green.opacity(0.25), lineWidth: 1)
+                        )
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
                     }
+                    .buttonStyle(.plain)
+                    
                 } else {
+                    
                     Text("👨‍🍳")
                         .font(.title2)
                 }

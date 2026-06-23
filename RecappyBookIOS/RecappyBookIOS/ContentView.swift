@@ -4,6 +4,8 @@ struct ContentView: View {
     
     @ObservedObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = RecipeViewModel()
+    @State private var showUserMenu = false
+    @State private var showAddRecipe = false
     
     var body: some View {
         
@@ -19,8 +21,8 @@ struct ContentView: View {
                         onLogoTap: {
                             viewModel.clearCategory()
                         },
-                        onLogoutTap: {
-                            authViewModel.logout()
+                        onUserMenuTap: {
+                            showUserMenu = true
                         }
                     )
                     
@@ -118,6 +120,41 @@ struct ContentView: View {
         }
         .task {
             await viewModel.loadRecipes()
+        }
+        .sheet(isPresented: $showUserMenu) {
+            UserMenuView(
+                username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",
+                onAddRecipe: {
+                    showAddRecipe = true
+                },
+                onMyRecipes: {
+                    print("Moje recepty později")
+                },
+                onDeleteProfile: {
+                    print("Smazání profilu později")
+                },
+                onLogout: {
+                    authViewModel.logout()
+                }
+            )
+        }
+        .sheet(isPresented: $showAddRecipe) {
+            NavigationStack {
+                RecipeFormView(recipe: nil) {
+                    Task {
+                        await viewModel.loadRecipes()
+                    }
+                }
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            showAddRecipe = false
+                        } label: {
+                            Label("Zpět", systemImage: "chevron.left")
+                        }
+                    }
+                }
+            }
         }
     }
 }
