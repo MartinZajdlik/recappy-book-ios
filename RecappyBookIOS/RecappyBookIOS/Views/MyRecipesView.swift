@@ -16,6 +16,7 @@ struct MyRecipesView: View {
                 Text("Moje recepty")
                     .font(.largeTitle.bold())
                     .foregroundStyle(AppTheme.green)
+                    .frame(maxWidth: .infinity, alignment: .leading)
 
                 if viewModel.isLoading {
                     ProgressView()
@@ -42,6 +43,7 @@ struct MyRecipesView: View {
                     )
                 }
             }
+            .frame(maxWidth: .infinity)
             .padding()
         }
         .background(AppTheme.background)
