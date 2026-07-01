@@ -17,6 +17,12 @@ struct RecipeDetailView: View {
                     .italic()
                     .foregroundStyle(.white.opacity(0.75))
                 
+                if let author = recipe.authorUsername {
+                    Text("Autor: \(author)")
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.mutedText)
+                }
+                
                 if let imageUrl = recipe.imageUrl {
                     AsyncImage(url: URL(string: imageUrl)) { image in
                         image
@@ -60,6 +66,7 @@ struct RecipeDetailView: View {
                 Text(recipe.instructions ?? "")
                     .foregroundStyle(.white)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(20)
         }
         .background(AppTheme.background)

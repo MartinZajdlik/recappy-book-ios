@@ -27,6 +27,13 @@ struct RecipeCardView: View {
                 Text("Kategorie: \(recipe.category ?? "-")")
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.8))
+                
+                if let author = recipe.authorUsername {
+                        Text("Autor: \(author)")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.mutedText)
+                    }
+                
             }
             
             Spacer()

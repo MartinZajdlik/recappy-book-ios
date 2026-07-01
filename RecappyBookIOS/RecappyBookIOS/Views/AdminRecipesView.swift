@@ -185,6 +185,13 @@ struct AdminRecipeCardView: View {
                         .font(.caption.bold())
                         .foregroundStyle(AppTheme.green)
                     
+                    if let author = recipe.authorUsername {
+                        Text("Autor: \(author)")
+                            .font(.caption)
+                            .foregroundStyle(AppTheme.mutedText)
+                    }
+
+                    
                     Text(recipe.ingredients ?? "")
                         .font(.caption)
                         .foregroundStyle(AppTheme.mutedText)

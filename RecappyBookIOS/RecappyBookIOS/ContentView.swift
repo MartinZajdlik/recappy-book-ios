@@ -6,6 +6,7 @@ struct ContentView: View {
     @StateObject private var viewModel = RecipeViewModel()
     @State private var showUserMenu = false
     @State private var showAddRecipe = false
+    @State private var showMyRecipes = false
     
     var body: some View {
         
@@ -128,7 +129,7 @@ struct ContentView: View {
                     showAddRecipe = true
                 },
                 onMyRecipes: {
-                    print("Moje recepty později")
+                    showMyRecipes = true
                 },
                 onDeleteProfile: {
                     print("Smazání profilu později")
@@ -156,6 +157,21 @@ struct ContentView: View {
                 }
             }
         }
+        .sheet(isPresented: $showMyRecipes) {
+            NavigationStack {
+                MyRecipesView()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button {
+                                showMyRecipes = false
+                            } label: {
+                                Label("Zpět", systemImage: "chevron.left")
+                            }
+                        }
+                    }
+            }
+        }
+        
     }
 }
 
