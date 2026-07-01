@@ -152,6 +152,21 @@ final class AuthService {
         return try JSONDecoder().decode(UserInfoResponse.self, from: data)
     }
     
+    func deleteMyAccount() async throws {
+        
+        let request = try APIClient.shared.makeRequest(
+            path: "/auth/me",
+            method: "DELETE",
+            requiresAuth: true
+        )
+        
+        let (_, response) = try await URLSession.shared.data(for: request)
+        
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+    }
     
     
     

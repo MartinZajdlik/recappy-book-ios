@@ -157,4 +157,15 @@ final class AuthViewModel: ObservableObject {
             }
         }
     }
+    
+    func deleteMyAccount() async {
+        errorMessage = ""
+        
+        do {
+            try await AuthService.shared.deleteMyAccount()
+            logout()
+        } catch {
+            errorMessage = error.localizedDescription
+        }
+    }
 }

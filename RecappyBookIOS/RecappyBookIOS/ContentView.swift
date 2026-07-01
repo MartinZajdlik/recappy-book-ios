@@ -7,6 +7,7 @@ struct ContentView: View {
     @State private var showUserMenu = false
     @State private var showAddRecipe = false
     @State private var showMyRecipes = false
+    @State private var showDeleteProfileAlert = false
     
     var body: some View {
         
@@ -132,7 +133,7 @@ struct ContentView: View {
                     showMyRecipes = true
                 },
                 onDeleteProfile: {
-                    print("Smazání profilu později")
+                    showDeleteProfileAlert = true
                 },
                 onLogout: {
                     authViewModel.logout()
@@ -171,6 +172,19 @@ struct ContentView: View {
                     }
             }
         }
+        
+        .alert("Smazat účet?", isPresented: $showDeleteProfileAlert) {
+            Button("Zrušit", role: .cancel) {}
+
+            Button("Smazat", role: .destructive) {
+                Task {
+                    await authViewModel.deleteMyAccount()
+                }
+            }
+        } message: {
+            Text("Opravdu chceš smazat svůj účet? Smažou se také všechny tvoje recepty. Tuto akci nelze vrátit.")
+        }
+        
         
     }
 }
