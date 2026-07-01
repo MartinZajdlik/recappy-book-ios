@@ -164,6 +164,30 @@ struct RecipeFormView: View {
             isSaving = true
             errorMessage = nil
             
+            guard !title.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                errorMessage = "Vyplň název receptu."
+                isSaving = false
+                return
+            }
+
+            guard !ingredients.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                errorMessage = "Vyplň ingredience."
+                isSaving = false
+                return
+            }
+
+            guard !instructions.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                errorMessage = "Vyplň postup."
+                isSaving = false
+                return
+            }
+
+            guard selectedImageData != nil || isEditMode else {
+                errorMessage = "Vyber obrázek receptu."
+                isSaving = false
+                return
+            }
+            
             defer {
                 isSaving = false
             }
