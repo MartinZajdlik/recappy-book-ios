@@ -126,6 +126,7 @@ struct ContentView: View {
         .sheet(isPresented: $showUserMenu) {
             UserMenuView(
                 username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",
+                isAdmin: authViewModel.role == "ROLE_ADMIN",
                 onAddRecipe: {
                     showAddRecipe = true
                 },

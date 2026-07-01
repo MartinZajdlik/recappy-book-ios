@@ -3,6 +3,7 @@ import SwiftUI
 struct UserMenuView: View {
     
     let username: String
+    let isAdmin: Bool
     let onAddRecipe: () -> Void
     let onMyRecipes: () -> Void
     let onDeleteProfile: () -> Void
@@ -36,15 +37,21 @@ struct UserMenuView: View {
                     dismiss()
                     onMyRecipes()
                 }
-                
-                menuButton(title: "Smazat profil", icon: "trash.fill", isDestructive: true) {
-                    dismiss()
-                    onDeleteProfile()
-                }
-                
+            }
+
+            Spacer()
+
+            VStack(spacing: 14) {
                 menuButton(title: "Odhlásit", icon: "rectangle.portrait.and.arrow.right") {
                     dismiss()
                     onLogout()
+                }
+                
+                if !isAdmin {
+                    menuButton(title: "Smazat profil", icon: "trash.fill", isDestructive: true) {
+                        dismiss()
+                        onDeleteProfile()
+                    }
                 }
             }
             
@@ -84,6 +91,7 @@ struct UserMenuView: View {
 #Preview {
     UserMenuView(
         username: "admin",
+        isAdmin: true ,
         onAddRecipe: {},
         onMyRecipes: {},
         onDeleteProfile: {},

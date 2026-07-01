@@ -50,7 +50,7 @@ struct AdminView: View {
         }
         .sheet(isPresented: $showUserMenu) {
             UserMenuView(
-                username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",
+                username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",isAdmin: authViewModel.role == "ROLE_ADMIN",
                 onAddRecipe: {
                     print("Admin přidat recept později")
                 },

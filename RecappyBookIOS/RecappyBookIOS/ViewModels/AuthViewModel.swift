@@ -81,6 +81,10 @@ final class AuthViewModel: ObservableObject {
             
             successMessage = message
             
+            username = ""
+            email = ""
+            password = ""
+            
         } catch {
             errorMessage = error.localizedDescription
         }
