@@ -77,9 +77,10 @@ struct ContentView: View {
                                         NavigationLink {
                                             RecipeDetailView(recipe: recipe)
                                         } label: {
-                                            RecipeCardView(recipe: recipe)
+                                            DailyTipCardView(recipe: recipe)
                                         }
                                         .buttonStyle(.plain)
+                                        .padding(.horizontal, 14)
                                     }
                                 } else {
                                     // Fallback: if no dailyTip yet, show list
@@ -192,4 +193,64 @@ struct ContentView: View {
 
 #Preview {
     ContentView(authViewModel: AuthViewModel())
+}
+
+struct DailyTipCardView: View {
+    
+    let recipe: Recipe
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            
+            Text(recipe.title)
+                .font(.title)
+                .fontWeight(.heavy)
+                .foregroundStyle(AppTheme.green)
+            
+            if let imageUrl = recipe.imageUrl,
+               let url = URL(string: imageUrl) {
+                
+                AsyncImage(url: url) { image in
+                    image
+                        .resizable()
+                        .scaledToFill()
+                } placeholder: {
+                    ZStack {
+                        RoundedRectangle(cornerRadius: 18)
+                            .fill(AppTheme.categoryCard)
+                        
+                        ProgressView()
+                    }
+                }
+                .frame(height: 220)
+                .frame(maxWidth: .infinity)
+                .clipShape(RoundedRectangle(cornerRadius: 18))
+            }
+            
+            VStack(alignment: .leading, spacing: 6) {
+
+                HStack(spacing: 4) {
+                    Text("Kategorie:")
+                        .foregroundStyle(AppTheme.mutedText)
+
+                    Text(recipe.category ?? "Bez kategorie")
+                        .foregroundStyle(AppTheme.text)
+                }
+                .font(.title3)
+
+                HStack(spacing: 4) {
+                    Text("Autor:")
+                        .foregroundStyle(AppTheme.mutedText)
+
+                    Text(recipe.authorUsername ?? "Neznámý autor")
+                        .foregroundStyle(AppTheme.text)
+                }
+                .font(.title3)
+            }
+        }
+        .padding(16)
+        .background(AppTheme.card)
+        .clipShape(RoundedRectangle(cornerRadius: 24))
+        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
+    }
 }

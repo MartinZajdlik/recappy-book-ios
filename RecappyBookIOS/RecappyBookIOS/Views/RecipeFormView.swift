@@ -143,7 +143,7 @@ struct RecipeFormView: View {
         .onChange(of: selectedPhoto) { _, newItem in
             Task {
                 if let data = try? await newItem?.loadTransferable(type: Data.self) {
-                    selectedImageData = data
+                    selectedImageData = compressImageData(data)
                 }
             }
         }
@@ -226,4 +226,31 @@ struct RecipeFormView: View {
 
 #Preview {
     RecipeFormView(recipe: nil, onSave: {})
+}
+private func compressImageData(_ data: Data) -> Data? {
+    guard let image = UIImage(data: data) else {
+        return nil
+    }
+    
+    let maxWidth: CGFloat = 1200
+    let scale = maxWidth / image.size.width
+    
+    let newSize: CGSize
+    
+    if image.size.width > maxWidth {
+        newSize = CGSize(
+            width: maxWidth,
+            height: image.size.height * scale
+        )
+    } else {
+        newSize = image.size
+    }
+    
+    let renderer = UIGraphicsImageRenderer(size: newSize)
+    
+    let resizedImage = renderer.image { _ in
+        image.draw(in: CGRect(origin: .zero, size: newSize))
+    }
+    
+    return resizedImage.jpegData(compressionQuality: 0.7)
 }
