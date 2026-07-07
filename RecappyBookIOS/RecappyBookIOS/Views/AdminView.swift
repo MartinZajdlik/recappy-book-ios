@@ -57,6 +57,8 @@ struct AdminView: View {
                 onMyRecipes: {
                     print("Moje recepty později")
                 },
+                onFavoriteRecipes: {
+                },
                 onDeleteProfile: {
                     print("Smazání profilu později")
                 },

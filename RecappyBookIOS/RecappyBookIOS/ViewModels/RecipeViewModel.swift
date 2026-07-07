@@ -49,4 +49,23 @@ final class RecipeViewModel: ObservableObject {
 
         await loadRecipes()
     }
+    func toggleFavorite(for recipe: Recipe) async {
+        guard let index = recipes.firstIndex(where: { $0.id == recipe.id }) else {
+            return
+        }
+
+        recipes[index].favorite.toggle()
+
+        do {
+            try await APIService.shared.toggleFavorite(recipeId: recipe.id)
+
+            if dailyTip?.id == recipe.id {
+                dailyTip?.favorite = recipes[index].favorite
+            }
+        } catch {
+            recipes[index].favorite.toggle()
+            errorMessage = "Nepodařilo se upravit oblíbený recept."
+            print("Chyba při změně oblíbeného receptu:", error)
+        }
+    }
 }

@@ -8,6 +8,7 @@ struct ContentView: View {
     @State private var showAddRecipe = false
     @State private var showMyRecipes = false
     @State private var showDeleteProfileAlert = false
+    @State private var showFavoriteRecipes = false
     
     var body: some View {
         
@@ -89,7 +90,14 @@ struct ContentView: View {
                                             NavigationLink {
                                                 RecipeDetailView(recipe: recipe)
                                             } label: {
-                                                RecipeCardView(recipe: recipe)
+                                                RecipeCardView(
+                                                    recipe: recipe,
+                                                    onFavoriteTap: {
+                                                        Task {
+                                                            await viewModel.toggleFavorite(for: recipe)
+                                                        }
+                                                    }
+                                                )
                                             }
                                             .buttonStyle(.plain)
                                         }
@@ -101,7 +109,14 @@ struct ContentView: View {
                                         NavigationLink {
                                             RecipeDetailView(recipe: recipe)
                                         } label: {
-                                            RecipeCardView(recipe: recipe)
+                                            RecipeCardView(
+                                                recipe: recipe,
+                                                onFavoriteTap: {
+                                                    Task {
+                                                        await viewModel.toggleFavorite(for: recipe)
+                                                    }
+                                                }
+                                            )
                                         }
                                         .buttonStyle(.plain)
                                     }
@@ -133,6 +148,9 @@ struct ContentView: View {
                 },
                 onMyRecipes: {
                     showMyRecipes = true
+                },
+                onFavoriteRecipes: {
+                    showFavoriteRecipes = true
                 },
                 onDeleteProfile: {
                     showDeleteProfileAlert = true
@@ -167,6 +185,20 @@ struct ContentView: View {
                         ToolbarItem(placement: .topBarLeading) {
                             Button {
                                 showMyRecipes = false
+                            } label: {
+                                Label("Zpět", systemImage: "chevron.left")
+                            }
+                        }
+                    }
+            }
+        }
+        .sheet(isPresented: $showFavoriteRecipes) {
+            NavigationStack {
+                FavoriteRecipesView()
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button {
+                                showFavoriteRecipes = false
                             } label: {
                                 Label("Zpět", systemImage: "chevron.left")
                             }

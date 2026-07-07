@@ -6,6 +6,7 @@ struct UserMenuView: View {
     let isAdmin: Bool
     let onAddRecipe: () -> Void
     let onMyRecipes: () -> Void
+    let onFavoriteRecipes: () -> Void
     let onDeleteProfile: () -> Void
     let onLogout: () -> Void
     
@@ -37,6 +38,12 @@ struct UserMenuView: View {
                 menuButton(title: "Moje recepty", icon: "book.fill") {
                     dismiss()
                     onMyRecipes()
+                }
+                if !isAdmin {
+                    menuButton(title: "Oblíbené recepty", icon: "star.fill") {
+                        dismiss()
+                        onFavoriteRecipes()
+                    }
                 }
             }
 
@@ -95,6 +102,7 @@ struct UserMenuView: View {
         isAdmin: true ,
         onAddRecipe: {},
         onMyRecipes: {},
+        onFavoriteRecipes: {},
         onDeleteProfile: {},
         onLogout: {}
     )

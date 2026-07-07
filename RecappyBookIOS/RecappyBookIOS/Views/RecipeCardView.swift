@@ -3,6 +3,7 @@ import SwiftUI
 struct RecipeCardView: View {
     
     let recipe: Recipe
+    let onFavoriteTap: (() -> Void)?
     
     var body: some View {
         
@@ -37,8 +38,18 @@ struct RecipeCardView: View {
                     }
                 
             }
-            
             Spacer()
+            
+            Button {
+                onFavoriteTap?()
+            } label: {
+                Image(systemName: recipe.favorite == true ? "star.fill" : "star")
+                    .font(.title2)
+                    .foregroundStyle(recipe.favorite == true ? .yellow : .white.opacity(0.7))
+            }
+            .buttonStyle(.plain)
+            
+          
         }
         .padding(16)
         .background(AppTheme.card)
@@ -60,8 +71,10 @@ struct RecipeCardView: View {
             instructions: "Postup",
             category: "Hlavní jídla",
             imageUrl: nil,
-            authorUsername: "martin"
-        )
+            authorUsername: "martin",
+            favorite: false
+        ),
+        onFavoriteTap: {}
     )
     .background(AppTheme.background)
 }
