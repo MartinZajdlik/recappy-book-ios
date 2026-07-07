@@ -203,7 +203,7 @@ struct RecipeFormView: View {
                     imageData: selectedImageData
                 )
             } else {
-                _ = try await APIService.shared.createRecipe(
+                try await APIService.shared.createRecipe(
                     title: title,
                     category: category,
                     ingredients: ingredients,

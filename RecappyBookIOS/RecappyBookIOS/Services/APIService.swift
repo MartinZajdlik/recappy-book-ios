@@ -80,7 +80,7 @@ final class APIService {
         guard let httpResponse = response as? HTTPURLResponse else {
             throw URLError(.badServerResponse)
         }
-
+        
         guard httpResponse.statusCode == 200 || httpResponse.statusCode == 201 else {
             throw NSError(
                 domain: "",
@@ -90,7 +90,7 @@ final class APIService {
                 ]
             )
         }
-    
+    }
 
     func updateRecipe(
         id: Int64,
