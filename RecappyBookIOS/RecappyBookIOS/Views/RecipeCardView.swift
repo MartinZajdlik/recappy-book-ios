@@ -29,9 +29,11 @@ struct RecipeCardView: View {
                     .foregroundStyle(.white.opacity(0.8))
                 
                 if let author = recipe.authorUsername {
-                        Text("Autor: \(author)")
-                            .font(.caption)
-                            .foregroundStyle(AppTheme.mutedText)
+                    Text("Autor: \(author)")
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.mutedText)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                     }
                 
             }

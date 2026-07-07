@@ -42,4 +42,11 @@ final class RecipeViewModel: ObservableObject {
         
         isLoading = false
     }
+    func loadRecipesIfNeeded() async {
+        if isLoading || !recipes.isEmpty {
+            return
+        }
+
+        await loadRecipes()
+    }
 }

@@ -87,7 +87,7 @@ struct AdminRecipesView: View {
             .padding(.horizontal)
         }
         .task {
-            await viewModel.loadRecipes()
+            await viewModel.loadRecipesIfNeeded()
         }
         .alert("Smazat recept?", isPresented: $showDeleteAlert) {
             Button("Zrušit", role: .cancel) {}

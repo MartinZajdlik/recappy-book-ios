@@ -25,6 +25,7 @@ struct UserMenuView: View {
                     .foregroundStyle(AppTheme.green)
                     .lineLimit(1)
                     .truncationMode(.tail)
+                    .frame(maxWidth: 260)
             }
             
             VStack(spacing: 14) {

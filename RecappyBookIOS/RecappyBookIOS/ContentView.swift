@@ -122,7 +122,7 @@ struct ContentView: View {
             }
         }
         .task {
-            await viewModel.loadRecipes()
+            await viewModel.loadRecipesIfNeeded()
         }
         .sheet(isPresented: $showUserMenu) {
             UserMenuView(

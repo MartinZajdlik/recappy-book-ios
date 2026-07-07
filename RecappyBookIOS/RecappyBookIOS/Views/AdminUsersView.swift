@@ -99,10 +99,14 @@ struct AdminUserCardView: View {
                     Text(user.username)
                         .font(.headline)
                         .foregroundStyle(AppTheme.text)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                     
                     Text(user.email)
                         .font(.subheadline)
                         .foregroundStyle(AppTheme.mutedText)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                 }
                 
                 Spacer()
