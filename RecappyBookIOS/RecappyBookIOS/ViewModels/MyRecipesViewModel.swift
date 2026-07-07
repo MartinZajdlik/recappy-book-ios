@@ -22,4 +22,11 @@ final class MyRecipesViewModel: ObservableObject {
             errorMessage = error.localizedDescription
         }
     }
+    func loadRecipesIfNeeded() async {
+        if isLoading || !recipes.isEmpty {
+            return
+        }
+
+        await loadRecipes()
+    }
 }

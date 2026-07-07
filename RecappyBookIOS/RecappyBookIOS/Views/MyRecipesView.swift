@@ -48,7 +48,7 @@ struct MyRecipesView: View {
         }
         .background(AppTheme.background)
         .task {
-            await viewModel.loadRecipes()
+            await viewModel.loadRecipesIfNeeded()
         }
         .sheet(item: $recipeToShow) { recipe in
             NavigationStack {

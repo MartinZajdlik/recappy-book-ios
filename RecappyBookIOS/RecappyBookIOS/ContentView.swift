@@ -208,7 +208,7 @@ struct DailyTipCardView: View {
                 .foregroundStyle(AppTheme.green)
             
             if let imageUrl = recipe.imageUrl,
-               let url = URL(string: imageUrl) {
+               let url = URL(string: optimizedImageUrl(imageUrl, width: 900)) {
                 
                 AsyncImage(url: url) { image in
                     image

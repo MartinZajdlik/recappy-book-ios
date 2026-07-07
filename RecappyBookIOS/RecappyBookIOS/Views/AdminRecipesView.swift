@@ -160,7 +160,7 @@ struct AdminRecipeCardView: View {
             
             HStack(alignment: .top, spacing: 12) {
                 
-                AsyncImage(url: URL(string: recipe.imageUrl ?? "")) { image in
+                AsyncImage(url: URL(string: optimizedImageUrl(recipe.imageUrl ?? "", width: 300))) { image in
                     image
                         .resizable()
                         .scaledToFill()

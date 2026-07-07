@@ -24,7 +24,7 @@ struct RecipeDetailView: View {
                 }
                 
                 if let imageUrl = recipe.imageUrl {
-                    AsyncImage(url: URL(string: imageUrl)) { image in
+                    AsyncImage(url: URL(string: optimizedImageUrl(imageUrl, width: 900))) { image in
                         image
                             .resizable()
                             .scaledToFill()
