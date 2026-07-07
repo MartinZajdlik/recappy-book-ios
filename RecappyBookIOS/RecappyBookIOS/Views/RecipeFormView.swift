@@ -108,19 +108,22 @@ struct RecipeFormView: View {
                 Button {
                     showSaveAlert = true
                 } label: {
-                    Text(isEditMode ? "Uložit změny" : "Přidat recept")
-                        .font(.headline)
-                        .frame(maxWidth: .infinity)
-                        .padding()
-                        .background(AppTheme.green)
-                        .foregroundStyle(.black)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    if isSaving {
+                        ProgressView()
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                    } else {
+                        Text(isEditMode ? "Uložit změny" : "Přidat recept")
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                    }
                 }
+                .background(AppTheme.green)
+                .foregroundStyle(.black)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .disabled(isSaving)
 
-                if isSaving {
-                    ProgressView("Ukládám recept...")
-                        .foregroundStyle(AppTheme.text)
-                }
 
                 if let errorMessage {
                     Text(errorMessage)

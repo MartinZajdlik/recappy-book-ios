@@ -23,16 +23,34 @@ struct RecipeDetailView: View {
                         .foregroundStyle(AppTheme.mutedText)
                 }
                 
-                if let imageUrl = recipe.imageUrl {
-                    AsyncImage(url: URL(string: optimizedImageUrl(imageUrl, width: 900))) { image in
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    } placeholder: {
-                        ProgressView()
+                if let imageUrl = recipe.imageUrl,
+                   !imageUrl.isEmpty,
+                   let url = URL(string: optimizedImageUrl(imageUrl, width: 900)) {
+                    
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 220)
+
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                                .frame(height: 220)
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+
+                        case .failure:
+                            Text("Obrázek se nepodařilo načíst")
+                                .foregroundStyle(AppTheme.mutedText)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 120)
+
+                        @unknown default:
+                            EmptyView()
+                        }
                     }
-                    .frame(height: 220)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
                 }
                 
                 Text("Ingredience")

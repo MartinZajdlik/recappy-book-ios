@@ -206,6 +206,27 @@ struct ContentView: View {
                     }
             }
         }
+        .onChange(of: showAddRecipe) { _, isPresented in
+            if !isPresented {
+                Task {
+                    await viewModel.loadRecipes()
+                }
+            }
+        }
+        .onChange(of: showMyRecipes) { _, isPresented in
+            if !isPresented {
+                Task {
+                    await viewModel.loadRecipes()
+                }
+            }
+        }
+        .onChange(of: showFavoriteRecipes) { _, isPresented in
+            if !isPresented {
+                Task {
+                    await viewModel.loadRecipes()
+                }
+            }
+        }
         
         .alert("Smazat účet?", isPresented: $showDeleteProfileAlert) {
             Button("Zrušit", role: .cancel) {}
