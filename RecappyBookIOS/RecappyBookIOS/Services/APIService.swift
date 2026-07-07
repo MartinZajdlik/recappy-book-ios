@@ -51,7 +51,7 @@ final class APIService {
         instructions: String,
         imageData: Data?
         
-    ) async throws -> Recipe {
+    ) async throws {
         
         let boundary = UUID().uuidString
         
@@ -81,7 +81,7 @@ final class APIService {
             throw URLError(.badServerResponse)
         }
 
-        guard httpResponse.statusCode == 200 else {
+        guard httpResponse.statusCode == 200 || httpResponse.statusCode == 201 else {
             throw NSError(
                 domain: "",
                 code: httpResponse.statusCode,
@@ -90,9 +90,7 @@ final class APIService {
                 ]
             )
         }
-        
-        return try JSONDecoder().decode(Recipe.self, from: data)
-    }
+    
 
     func updateRecipe(
         id: Int64,

@@ -8,5 +8,5 @@ struct Recipe: Identifiable, Codable {
     let category: String?
     let imageUrl: String?
     let authorUsername: String?
-    var favorite: Bool
+    var favorite: Bool = false
 }
