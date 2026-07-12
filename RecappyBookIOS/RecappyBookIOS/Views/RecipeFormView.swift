@@ -135,6 +135,7 @@ struct RecipeFormView: View {
             .padding()
         }
         .background(AppTheme.background)
+        .dismissKeyboardOnTap()
         .onAppear {
             if let recipe {
                 title = recipe.title

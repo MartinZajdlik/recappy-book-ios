@@ -122,8 +122,9 @@ struct AuthView: View {
         }
         .padding()
         .background(AppTheme.background)
+        .dismissKeyboardOnTap()
     }
-    
+
     private func authTabButton(title: String, isActive: Bool, action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(title)
