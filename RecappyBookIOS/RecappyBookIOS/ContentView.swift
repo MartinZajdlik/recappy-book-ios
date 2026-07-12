@@ -135,6 +135,12 @@ struct ContentView: View {
                 FooterView()
                     .background(AppTheme.background)
             }
+            .navigationDestination(isPresented: $showMyRecipes) {
+                MyRecipesView()
+            }
+            .navigationDestination(isPresented: $showFavoriteRecipes) {
+                FavoriteRecipesView()
+            }
         }
         .task {
             await viewModel.loadRecipesIfNeeded()
@@ -176,34 +182,6 @@ struct ContentView: View {
                         }
                     }
                 }
-            }
-        }
-        .sheet(isPresented: $showMyRecipes) {
-            NavigationStack {
-                MyRecipesView()
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button {
-                                showMyRecipes = false
-                            } label: {
-                                Label("Zpět", systemImage: "chevron.left")
-                            }
-                        }
-                    }
-            }
-        }
-        .sheet(isPresented: $showFavoriteRecipes) {
-            NavigationStack {
-                FavoriteRecipesView()
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button {
-                                showFavoriteRecipes = false
-                            } label: {
-                                Label("Zpět", systemImage: "chevron.left")
-                            }
-                        }
-                    }
             }
         }
         .onChange(of: showAddRecipe) { _, isPresented in
