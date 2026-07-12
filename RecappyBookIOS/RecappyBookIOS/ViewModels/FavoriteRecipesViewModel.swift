@@ -30,4 +30,19 @@ final class FavoriteRecipesViewModel: ObservableObject {
 
         await loadRecipes()
     }
+
+    func toggleFavorite(for recipe: Recipe) async {
+        guard let index = recipes.firstIndex(where: { $0.id == recipe.id }) else {
+            return
+        }
+
+        let removed = recipes.remove(at: index)
+
+        do {
+            try await APIService.shared.toggleFavorite(recipeId: recipe.id)
+        } catch {
+            recipes.insert(removed, at: index)
+            errorMessage = "Nepodařilo se upravit oblíbený recept."
+        }
+    }
 }

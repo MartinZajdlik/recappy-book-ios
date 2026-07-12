@@ -103,19 +103,8 @@ struct AdminRecipesView: View {
         } message: {
             Text("Opravdu chceš smazat tento recept?")
         }
-        .sheet(item: $recipeToShow) { recipe in
-            NavigationStack {
-                RecipeDetailView(recipe: recipe)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button {
-                                recipeToShow = nil
-                            } label: {
-                                Label("Zpět", systemImage: "chevron.left")
-                            }
-                        }
-                    }
-            }
+        .navigationDestination(item: $recipeToShow) { recipe in
+            RecipeDetailView(recipe: recipe)
         }
         .sheet(isPresented: $showAddForm) {
             NavigationStack {

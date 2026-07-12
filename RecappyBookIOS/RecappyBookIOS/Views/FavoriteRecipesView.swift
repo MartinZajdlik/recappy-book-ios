@@ -34,7 +34,11 @@ struct FavoriteRecipesView: View {
                     } label: {
                         RecipeCardView(
                             recipe: recipe,
-                            onFavoriteTap: {}
+                            onFavoriteTap: {
+                                Task {
+                                    await viewModel.toggleFavorite(for: recipe)
+                                }
+                            }
                         )
                     }
                     .buttonStyle(.plain)
@@ -46,10 +50,8 @@ struct FavoriteRecipesView: View {
         .task {
             await viewModel.loadRecipesIfNeeded()
         }
-        .sheet(item: $recipeToShow) { recipe in
-            NavigationStack {
-                RecipeDetailView(recipe: recipe)
-            }
+        .navigationDestination(item: $recipeToShow) { recipe in
+            RecipeDetailView(recipe: recipe)
         }
     }
 }

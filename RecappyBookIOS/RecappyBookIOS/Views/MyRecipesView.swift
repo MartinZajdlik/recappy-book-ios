@@ -50,10 +50,8 @@ struct MyRecipesView: View {
         .task {
             await viewModel.loadRecipesIfNeeded()
         }
-        .sheet(item: $recipeToShow) { recipe in
-            NavigationStack {
-                RecipeDetailView(recipe: recipe)
-            }
+        .navigationDestination(item: $recipeToShow) { recipe in
+            RecipeDetailView(recipe: recipe)
         }
         .sheet(item: $recipeToEdit) { recipe in
             NavigationStack {
