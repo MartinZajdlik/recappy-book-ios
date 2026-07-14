@@ -28,12 +28,12 @@ final class AdminRecipesViewModel: ObservableObject {
         }
         
         do {
-            recipes = try await APIService.shared.fetchRecipes()
+            recipes = try await APIService.shared.fetchAllRecipesForAdmin()
         } catch {
             errorMessage = error.localizedDescription
         }
     }
-    
+
     func selectCategory(_ category: String) {
         selectedCategory = category
     }

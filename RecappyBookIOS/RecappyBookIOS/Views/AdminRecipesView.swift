@@ -143,7 +143,9 @@ struct AdminRecipeCardView: View {
     let onShow: () -> Void
     let onEdit: () -> Void
     let onDelete: () -> Void
-    
+    var onApprove: (() -> Void)? = nil
+    var onReject: (() -> Void)? = nil
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             
@@ -169,11 +171,15 @@ struct AdminRecipeCardView: View {
                         .font(.headline)
                         .foregroundStyle(AppTheme.text)
                         .lineLimit(2)
-                    
-                    Text(recipe.category ?? "Bez kategorie")
-                        .font(.caption.bold())
-                        .foregroundStyle(AppTheme.green)
-                    
+
+                    HStack(spacing: 6) {
+                        Text(recipe.category ?? "Bez kategorie")
+                            .font(.caption.bold())
+                            .foregroundStyle(AppTheme.green)
+
+                        statusBadge
+                    }
+
                     if let author = recipe.authorUsername {
                         Text("Autor: \(author)")
                             .font(.caption)
@@ -210,10 +216,49 @@ struct AdminRecipeCardView: View {
                 }
                 .buttonStyle(.borderedProminent)
             }
+
+            if let onApprove, let onReject {
+                HStack(spacing: 8) {
+                    Button("Schválit") {
+                        onApprove()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.green)
+
+                    Button("Zamítnout", role: .destructive) {
+                        onReject()
+                    }
+                    .buttonStyle(.bordered)
+                }
+            }
         }
         .padding()
         .background(AppTheme.card)
         .clipShape(RoundedRectangle(cornerRadius: 14))
+    }
+
+    @ViewBuilder
+    private var statusBadge: some View {
+        switch recipe.status {
+        case .pending:
+            Text("čeká na schválení")
+                .font(.caption2.bold())
+                .foregroundStyle(.black)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(.orange)
+                .clipShape(Capsule())
+        case .rejected:
+            Text("zamítnuto")
+                .font(.caption2.bold())
+                .foregroundStyle(.white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(.red)
+                .clipShape(Capsule())
+        case .approved:
+            EmptyView()
+        }
     }
 }
 

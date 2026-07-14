@@ -9,6 +9,7 @@ struct Recipe: Identifiable, Codable, Hashable {
     let imageUrl: String?
     let authorUsername: String?
     var favorite: Bool
+    let status: RecipeStatus
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -19,6 +20,7 @@ struct Recipe: Identifiable, Codable, Hashable {
         case imageUrl
         case authorUsername
         case favorite
+        case status
     }
 
     init(
@@ -29,7 +31,8 @@ struct Recipe: Identifiable, Codable, Hashable {
         category: String?,
         imageUrl: String?,
         authorUsername: String?,
-        favorite: Bool = false
+        favorite: Bool = false,
+        status: RecipeStatus = .approved
     ) {
         self.id = id
         self.title = title
@@ -39,6 +42,7 @@ struct Recipe: Identifiable, Codable, Hashable {
         self.imageUrl = imageUrl
         self.authorUsername = authorUsername
         self.favorite = favorite
+        self.status = status
     }
 
     init(from decoder: Decoder) throws {
@@ -52,5 +56,6 @@ struct Recipe: Identifiable, Codable, Hashable {
         imageUrl = try container.decodeIfPresent(String.self, forKey: .imageUrl)
         authorUsername = try container.decodeIfPresent(String.self, forKey: .authorUsername)
         favorite = try container.decodeIfPresent(Bool.self, forKey: .favorite) ?? false
+        status = try container.decodeIfPresent(RecipeStatus.self, forKey: .status) ?? .approved
     }
 }

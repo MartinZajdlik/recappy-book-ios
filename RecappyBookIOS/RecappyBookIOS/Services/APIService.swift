@@ -268,5 +268,71 @@ final class APIService {
             throw URLError(.badServerResponse)
         }
     }
-    
+
+    func fetchAllRecipesForAdmin() async throws -> [Recipe] {
+
+        let request = try APIClient.shared.makeRequest(
+            path: "/admin/recepty",
+            method: "GET",
+            requiresAuth: true
+        )
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode([Recipe].self, from: data)
+    }
+
+    func fetchPendingRecipes() async throws -> [Recipe] {
+
+        let request = try APIClient.shared.makeRequest(
+            path: "/admin/recepty/pending",
+            method: "GET",
+            requiresAuth: true
+        )
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode([Recipe].self, from: data)
+    }
+
+    func approveRecipe(recipeId: Int64) async throws {
+        let request = try APIClient.shared.makeRequest(
+            path: "/admin/recepty/\(recipeId)/approve",
+            method: "PATCH",
+            requiresAuth: true
+        )
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+    }
+
+    func rejectRecipe(recipeId: Int64) async throws {
+        let request = try APIClient.shared.makeRequest(
+            path: "/admin/recepty/\(recipeId)/reject",
+            method: "PATCH",
+            requiresAuth: true
+        )
+
+        let (_, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+    }
+
 }

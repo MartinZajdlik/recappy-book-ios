@@ -8,6 +8,7 @@ struct AdminView: View {
     
     enum AdminTab {
         case recipes
+        case pending
         case users
     }
     
@@ -28,12 +29,15 @@ struct AdminView: View {
                     
                     HStack(spacing: 12) {
                         adminTabButton(title: "📋 Recepty", tab: .recipes)
+                        adminTabButton(title: "🕓 Ke schválení", tab: .pending)
                         adminTabButton(title: "👤 Uživatelé", tab: .users)
                     }
                     .padding(.horizontal)
-                    
+
                     if selectedTab == .recipes {
                         adminRecipesSection
+                    } else if selectedTab == .pending {
+                        adminPendingRecipesSection
                     } else {
                         adminUsersSection
                     }
@@ -74,7 +78,11 @@ struct AdminView: View {
     private var adminRecipesSection: some View {
         AdminRecipesView()
     }
-    
+
+    private var adminPendingRecipesSection: some View {
+        AdminPendingRecipesView()
+    }
+
     private var adminUsersSection: some View {
         AdminUsersView()
     }
