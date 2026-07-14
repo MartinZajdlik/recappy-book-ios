@@ -11,7 +11,7 @@ final class APIService {
         let request = try APIClient.shared.makeRequest(
             path: "/recepty",
             method: "GET",
-            requiresAuth: false
+            requiresAuth: true
         )
         
         let (data, response) = try await URLSession.shared.data(for: request)

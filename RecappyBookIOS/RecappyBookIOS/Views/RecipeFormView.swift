@@ -52,22 +52,31 @@ struct RecipeFormView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .foregroundStyle(AppTheme.text)
                 
-                TextEditor(text: $ingredients)
-                    .frame(minHeight: 120)
-                    .padding(8)
-                    .background(AppTheme.card)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .foregroundStyle(AppTheme.text)
-                    .overlay(alignment: .topLeading) {
-                        if ingredients.isEmpty {
-                            Text("Ingredience oddělené čárkou")
-                                .foregroundStyle(AppTheme.mutedText)
-                                .padding(.top, 16)
-                                .padding(.leading, 14)
+                VStack(alignment: .leading, spacing: 4) {
+                    TextEditor(text: $ingredients)
+                        .scrollContentBackground(.hidden)
+                        .frame(minHeight: 120)
+                        .padding(8)
+                        .background(AppTheme.card)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .foregroundStyle(AppTheme.text)
+                        .overlay(alignment: .topLeading) {
+                            if ingredients.isEmpty {
+                                Text("Ingredience oddělené čárkou")
+                                    .foregroundStyle(AppTheme.mutedText)
+                                    .padding(.top, 16)
+                                    .padding(.leading, 14)
+                            }
                         }
-                    }
-                
+
+                    Text("Ingredience odděluj čárkou, např.: mouka, cukr, vejce")
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.mutedText)
+                        .padding(.leading, 4)
+                }
+
                 TextEditor(text: $instructions)
+                    .scrollContentBackground(.hidden)
                     .frame(minHeight: 160)
                     .padding(8)
                     .background(AppTheme.card)
