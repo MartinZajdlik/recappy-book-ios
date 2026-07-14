@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "icon_book_c_green.png",
+      "filename" : "icon_crack_a_big.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,6 +13,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "icon_crack_a_big 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -24,6 +25,7 @@
           "value" : "tinted"
         }
       ],
+      "filename" : "icon_crack_a_big 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
