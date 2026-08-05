@@ -25,10 +25,14 @@ struct RecipeCardView: View {
                     .font(.system(size: 22, weight: .bold))
                     .foregroundStyle(AppTheme.green)
                 
-                Text("Kategorie: \(recipe.category ?? "-")")
-                    .font(.subheadline)
-                    .foregroundStyle(.white.opacity(0.8))
-                
+                HStack(spacing: 6) {
+                    Text("Kategorie: \(recipe.category ?? "-")")
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(0.8))
+
+                    statusBadge
+                }
+
                 if let author = recipe.authorUsername {
                     Text("Autor: \(author)")
                         .font(.caption)
@@ -59,6 +63,30 @@ struct RecipeCardView: View {
                 .stroke(Color.blue.opacity(0.25), lineWidth: 1)
         )
         .padding(.horizontal, 14)
+    }
+
+    @ViewBuilder
+    private var statusBadge: some View {
+        switch recipe.status {
+        case .pending:
+            Text("čeká na schválení")
+                .font(.caption2.bold())
+                .foregroundStyle(.black)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(.orange)
+                .clipShape(Capsule())
+        case .rejected:
+            Text("zamítnuto")
+                .font(.caption2.bold())
+                .foregroundStyle(.white)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 2)
+                .background(.red)
+                .clipShape(Capsule())
+        case .approved:
+            EmptyView()
+        }
     }
 }
 
