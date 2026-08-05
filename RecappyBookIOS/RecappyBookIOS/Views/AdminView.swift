@@ -41,16 +41,13 @@ struct AdminView: View {
                     } else {
                         adminUsersSection
                     }
+
+                    FooterView()
                 }
                 .padding(.top, 0)
-                .padding(.bottom, 90)
             }
             .background(AppTheme.background)
             .navigationBarHidden(true)
-            .safeAreaInset(edge: .bottom) {
-                FooterView()
-                    .background(AppTheme.background)
-            }
         }
         .sheet(isPresented: $showUserMenu) {
             UserMenuView(

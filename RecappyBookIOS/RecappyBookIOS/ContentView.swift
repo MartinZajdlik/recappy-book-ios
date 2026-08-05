@@ -124,17 +124,14 @@ struct ContentView: View {
                             }
                         }
                     }
-                    
+
+                    FooterView()
+
                 }
                 .padding(.top, 0)
-                .padding(.bottom, 90)
             }
             .background(AppTheme.background)
             .navigationBarHidden(true)
-            .safeAreaInset(edge: .bottom) {
-                FooterView()
-                    .background(AppTheme.background)
-            }
             .navigationDestination(isPresented: $showMyRecipes) {
                 MyRecipesView()
             }

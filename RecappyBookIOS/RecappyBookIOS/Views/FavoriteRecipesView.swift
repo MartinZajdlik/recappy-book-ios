@@ -13,6 +13,7 @@ struct FavoriteRecipesView: View {
                     .font(.largeTitle.bold())
                     .foregroundStyle(AppTheme.green)
                     .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal)
 
                 if viewModel.isLoading {
                     ProgressView()
@@ -21,11 +22,13 @@ struct FavoriteRecipesView: View {
                 if let error = viewModel.errorMessage {
                     Text(error)
                         .foregroundStyle(.red)
+                        .padding(.horizontal)
                 }
 
                 if !viewModel.isLoading && viewModel.recipes.isEmpty {
                     Text("Zatím nemáš žádné oblíbené recepty.")
                         .foregroundStyle(AppTheme.mutedText)
+                        .padding(.horizontal)
                 }
 
                 ForEach(viewModel.recipes) { recipe in
@@ -44,7 +47,7 @@ struct FavoriteRecipesView: View {
                     .buttonStyle(.plain)
                 }
             }
-            .padding()
+            .padding(.top)
         }
         .background(AppTheme.background)
         .task {
