@@ -4,6 +4,7 @@ struct ContentView: View {
     
     @ObservedObject var authViewModel: AuthViewModel
     @StateObject private var viewModel = RecipeViewModel()
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var showUserMenu = false
     @State private var showAddRecipe = false
     @State private var showMyRecipes = false
@@ -125,13 +126,21 @@ struct ContentView: View {
                         }
                     }
 
-                    FooterView()
+                    if verticalSizeClass == .compact {
+                        FooterView()
+                    }
 
                 }
                 .padding(.top, 0)
             }
             .background(AppTheme.background)
             .navigationBarHidden(true)
+            .safeAreaInset(edge: .bottom) {
+                if verticalSizeClass != .compact {
+                    FooterView()
+                        .background(AppTheme.background)
+                }
+            }
             .navigationDestination(isPresented: $showMyRecipes) {
                 MyRecipesView()
             }

@@ -3,6 +3,7 @@ import SwiftUI
 struct AdminView: View {
     
     @ObservedObject var authViewModel: AuthViewModel
+    @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var selectedTab: AdminTab = .recipes
     @State private var showUserMenu = false
     
@@ -42,12 +43,20 @@ struct AdminView: View {
                         adminUsersSection
                     }
 
-                    FooterView()
+                    if verticalSizeClass == .compact {
+                        FooterView()
+                    }
                 }
                 .padding(.top, 0)
             }
             .background(AppTheme.background)
             .navigationBarHidden(true)
+            .safeAreaInset(edge: .bottom) {
+                if verticalSizeClass != .compact {
+                    FooterView()
+                        .background(AppTheme.background)
+                }
+            }
         }
         .sheet(isPresented: $showUserMenu) {
             UserMenuView(
