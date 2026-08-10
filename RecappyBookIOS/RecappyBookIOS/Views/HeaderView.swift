@@ -27,14 +27,14 @@ struct HeaderView: View {
                         Image(systemName: "book.pages.fill")
                             .font(.system(size: 34, weight: .bold))
                             .foregroundStyle(Color(white: 0.95))
-                        
+
                         VStack(alignment: .leading, spacing: -2) {
                             Text("RecAPPy")
                                 .font(.system(size: 26, weight: .heavy))
                                 .foregroundStyle(Color(white: 0.95))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
-                            
+
                             Text("B O O K")
                                 .font(.system(size: 14, weight: .bold))
                                 .kerning(3)
