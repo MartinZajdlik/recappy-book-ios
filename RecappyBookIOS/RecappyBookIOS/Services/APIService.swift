@@ -11,7 +11,7 @@ final class APIService {
         let request = try APIClient.shared.makeRequest(
             path: "/recepty",
             method: "GET",
-            requiresAuth: true
+            optionalAuth: true
         )
         
         let (data, response) = try await URLSession.shared.data(for: request)
@@ -303,6 +303,23 @@ final class APIService {
         }
 
         return try JSONDecoder().decode([Recipe].self, from: data)
+    }
+
+    func fetchPendingRecipesCount() async throws -> Int {
+        let request = try APIClient.shared.makeRequest(
+            path: "/admin/recepty/pending/count",
+            method: "GET",
+            requiresAuth: true
+        )
+
+        let (data, response) = try await URLSession.shared.data(for: request)
+
+        guard let httpResponse = response as? HTTPURLResponse,
+              httpResponse.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode(Int.self, from: data)
     }
 
     func approveRecipe(recipeId: Int64) async throws {

@@ -4,12 +4,14 @@ struct UserMenuView: View {
     
     let username: String
     let isAdmin: Bool
+    let isGuest: Bool
     let onAddRecipe: () -> Void
     let onMyRecipes: () -> Void
     let onFavoriteRecipes: () -> Void
     let onDeleteProfile: () -> Void
     let onLogout: () -> Void
-    
+    let onExitGuest: () -> Void
+
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -35,11 +37,13 @@ struct UserMenuView: View {
                     onAddRecipe()
                 }
                 
-                menuButton(title: "Moje recepty", icon: "book.fill") {
-                    dismiss()
-                    onMyRecipes()
+                if !isGuest {
+                    menuButton(title: "Moje recepty", icon: "book.fill") {
+                        dismiss()
+                        onMyRecipes()
+                    }
                 }
-                if !isAdmin {
+                if !isAdmin && !isGuest {
                     menuButton(title: "Oblíbené recepty", icon: "star.fill") {
                         dismiss()
                         onFavoriteRecipes()
@@ -50,15 +54,22 @@ struct UserMenuView: View {
             Spacer()
 
             VStack(spacing: 14) {
-                menuButton(title: "Odhlásit", icon: "rectangle.portrait.and.arrow.right") {
-                    dismiss()
-                    onLogout()
-                }
-                
-                if !isAdmin {
-                    menuButton(title: "Smazat profil", icon: "trash.fill", isDestructive: true) {
+                if isGuest {
+                    menuButton(title: "Přihlásit se / Registrovat", icon: "person.crop.circle.badge.plus") {
                         dismiss()
-                        onDeleteProfile()
+                        onExitGuest()
+                    }
+                } else {
+                    menuButton(title: "Odhlásit", icon: "rectangle.portrait.and.arrow.right") {
+                        dismiss()
+                        onLogout()
+                    }
+
+                    if !isAdmin {
+                        menuButton(title: "Smazat profil", icon: "trash.fill", isDestructive: true) {
+                            dismiss()
+                            onDeleteProfile()
+                        }
                     }
                 }
             }
@@ -99,11 +110,13 @@ struct UserMenuView: View {
 #Preview {
     UserMenuView(
         username: "admin",
-        isAdmin: true ,
+        isAdmin: true,
+        isGuest: false,
         onAddRecipe: {},
         onMyRecipes: {},
         onFavoriteRecipes: {},
         onDeleteProfile: {},
-        onLogout: {}
+        onLogout: {},
+        onExitGuest: {}
     )
 }

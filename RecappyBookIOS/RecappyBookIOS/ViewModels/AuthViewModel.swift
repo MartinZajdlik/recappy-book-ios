@@ -16,8 +16,11 @@ final class AuthViewModel: ObservableObject {
     
     @Published var token: String? = nil
     @Published var role: String? = nil
-    
-    
+
+    @Published var isGuest = false
+    @Published var showGuestAlert = false
+
+
     init() {
         loadSession()
     }
@@ -162,6 +165,27 @@ final class AuthViewModel: ObservableObject {
         }
     }
     
+    // MARK: - GUEST
+
+    func continueAsGuest() {
+        errorMessage = ""
+        successMessage = ""
+        isGuest = true
+    }
+
+    func exitGuestMode() {
+        isGuest = false
+    }
+
+    @discardableResult
+    func guardGuest() -> Bool {
+        if isGuest {
+            showGuestAlert = true
+            return true
+        }
+        return false
+    }
+
     func deleteMyAccount() async {
         errorMessage = ""
         

@@ -21,6 +21,7 @@ struct CategoryButtonView: View {
             .frame(width: 62, height: 72)
             .background(AppTheme.categoryCard)
             .clipShape(RoundedRectangle(cornerRadius: 10))
+            .contentShape(Rectangle())
         }
     }
 }

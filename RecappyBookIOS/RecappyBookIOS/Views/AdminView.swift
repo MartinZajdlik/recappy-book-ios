@@ -6,6 +6,7 @@ struct AdminView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var selectedTab: AdminTab = .recipes
     @State private var showUserMenu = false
+    @State private var pendingCount = 0
     
     enum AdminTab {
         case recipes
@@ -50,7 +51,7 @@ struct AdminView: View {
                 .padding(.top, 0)
             }
             .background(AppTheme.background)
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 if verticalSizeClass != .compact {
                     FooterView()
@@ -58,9 +59,19 @@ struct AdminView: View {
                 }
             }
         }
+        .task {
+            await loadPendingCount()
+        }
+        .onChange(of: selectedTab) { _, _ in
+            Task {
+                await loadPendingCount()
+            }
+        }
         .sheet(isPresented: $showUserMenu) {
             UserMenuView(
-                username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",isAdmin: authViewModel.role == "ROLE_ADMIN",
+                username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",
+                isAdmin: authViewModel.role == "ROLE_ADMIN",
+                isGuest: false,
                 onAddRecipe: {
                     print("Admin přidat recept později")
                 },
@@ -74,7 +85,8 @@ struct AdminView: View {
                 },
                 onLogout: {
                     authViewModel.logout()
-                }
+                },
+                onExitGuest: {}
             )
         }
         
@@ -86,7 +98,15 @@ struct AdminView: View {
     }
 
     private var adminPendingRecipesSection: some View {
-        AdminPendingRecipesView()
+        AdminPendingRecipesView {
+            Task {
+                await loadPendingCount()
+            }
+        }
+    }
+
+    private func loadPendingCount() async {
+        pendingCount = (try? await APIService.shared.fetchPendingRecipesCount()) ?? pendingCount
     }
 
     private var adminUsersSection: some View {
@@ -99,11 +119,25 @@ struct AdminView: View {
         } label: {
             Text(title)
                 .font(.headline)
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
                 .background(selectedTab == tab ? AppTheme.green : AppTheme.card)
                 .foregroundStyle(selectedTab == tab ? .black : .white)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
+                .overlay(alignment: .topTrailing) {
+                    if tab == .pending && pendingCount > 0 {
+                        Text(pendingCount > 99 ? "99+" : "\(pendingCount)")
+                            .font(.system(size: 11, weight: .bold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(Color.red)
+                            .clipShape(Capsule())
+                            .offset(x: 10, y: -10)
+                    }
+                }
         }
     }
 }

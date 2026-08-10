@@ -86,7 +86,13 @@ struct AuthView: View {
                 showForgotPassword.toggle()
             }
             .foregroundStyle(AppTheme.blue)
-            
+
+            Button("Pokračovat jako host") {
+                viewModel.continueAsGuest()
+            }
+            .font(.subheadline.bold())
+            .foregroundStyle(AppTheme.mutedText)
+
             if showForgotPassword {
                 VStack(spacing: 12) {
                     TextField("E-mail pro reset hesla", text: $viewModel.email)

@@ -11,16 +11,17 @@ final class APIClient {
     func makeRequest(
         path: String,
         method: String = "GET",
-        requiresAuth: Bool = false
+        requiresAuth: Bool = false,
+        optionalAuth: Bool = false
     ) throws -> URLRequest {
-        
+
         guard let url = URL(string: "\(baseURL)\(path)") else {
             throw URLError(.badURL)
         }
-        
+
         var request = URLRequest(url: url)
         request.httpMethod = method
-        
+
         if requiresAuth {
             guard let token = KeychainService.shared.getToken() else {
                 throw NSError(
@@ -31,10 +32,12 @@ final class APIClient {
                     ]
                 )
             }
-            
+
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        } else if optionalAuth, let token = KeychainService.shared.getToken() {
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         }
-        
+
         return request
     }
 }

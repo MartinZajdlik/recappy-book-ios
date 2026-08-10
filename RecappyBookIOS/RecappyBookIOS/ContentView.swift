@@ -20,7 +20,7 @@ struct ContentView: View {
                 VStack(spacing: 20) {
                     
                     HeaderView(
-                        username: UserDefaults.standard.string(forKey: "currentUsername"),
+                        username: authViewModel.isGuest ? "Host" : UserDefaults.standard.string(forKey: "currentUsername"),
                         showUserControls: true,
                         onLogoTap: {
                             viewModel.clearCategory()
@@ -113,6 +113,7 @@ struct ContentView: View {
                                             RecipeCardView(
                                                 recipe: recipe,
                                                 onFavoriteTap: {
+                                                    if authViewModel.guardGuest() { return }
                                                     Task {
                                                         await viewModel.toggleFavorite(for: recipe)
                                                     }
@@ -134,7 +135,7 @@ struct ContentView: View {
                 .padding(.top, 0)
             }
             .background(AppTheme.background)
-            .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 if verticalSizeClass != .compact {
                     FooterView()
@@ -153,9 +154,11 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showUserMenu) {
             UserMenuView(
-                username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",
+                username: authViewModel.isGuest ? "Host" : (UserDefaults.standard.string(forKey: "currentUsername") ?? ""),
                 isAdmin: authViewModel.role == "ROLE_ADMIN",
+                isGuest: authViewModel.isGuest,
                 onAddRecipe: {
+                    if authViewModel.guardGuest() { return }
                     showAddRecipe = true
                 },
                 onMyRecipes: {
@@ -169,6 +172,9 @@ struct ContentView: View {
                 },
                 onLogout: {
                     authViewModel.logout()
+                },
+                onExitGuest: {
+                    authViewModel.exitGuestMode()
                 }
             )
         }
@@ -223,8 +229,17 @@ struct ContentView: View {
         } message: {
             Text("Opravdu chceš smazat svůj účet? Smažou se také všechny tvoje recepty. Tuto akci nelze vrátit.")
         }
-        
-        
+
+        .alert("Jsi přihlášen/a jako host", isPresented: $authViewModel.showGuestAlert) {
+            Button("Zavřít", role: .cancel) {}
+
+            Button("Přihlásit se") {
+                authViewModel.exitGuestMode()
+            }
+        } message: {
+            Text("Jako host nemůžeš přidávat recepty ani je ukládat do oblíbených. Zaregistruj se nebo se přihlas.")
+        }
+
     }
 }
 

@@ -7,6 +7,7 @@ struct AdminPendingRecipesView: View {
     @State private var showDeleteAlert = false
     @State private var recipeToShow: Recipe?
     @State private var recipeToEdit: Recipe?
+    var onStatusChange: () -> Void = {}
 
     var body: some View {
         VStack(spacing: 18) {
@@ -51,11 +52,13 @@ struct AdminPendingRecipesView: View {
                         onApprove: {
                             Task {
                                 await viewModel.approve(recipe)
+                                onStatusChange()
                             }
                         },
                         onReject: {
                             Task {
                                 await viewModel.reject(recipe)
+                                onStatusChange()
                             }
                         }
                     )
