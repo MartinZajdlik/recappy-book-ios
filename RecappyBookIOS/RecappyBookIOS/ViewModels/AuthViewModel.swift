@@ -48,8 +48,9 @@ final class AuthViewModel: ObservableObject {
             
             token = response.token
             role = response.role
-            
+
             KeychainService.shared.saveToken(response.token)
+            KeychainService.shared.saveRefreshToken(response.refreshToken)
             UserDefaults.standard.set(response.role, forKey: "userRole")
             UserDefaults.standard.set(username, forKey: "currentUsername")
             
@@ -117,21 +118,25 @@ final class AuthViewModel: ObservableObject {
     // MARK: - LOGOUT
     
     func logout() {
-        
+
         token = nil
         role = nil
-        
+
         username = ""
         password = ""
         email = ""
-        
+
         errorMessage = ""
         successMessage = ""
-        
-        KeychainService.shared.deleteToken()
+
+        Task {
+            await AuthService.shared.serverLogout()
+        }
+
+        KeychainService.shared.clearSession()
         UserDefaults.standard.removeObject(forKey: "userRole")
         UserDefaults.standard.removeObject(forKey: "currentUsername")
-        
+
         isLoggedIn = false
     }
     
