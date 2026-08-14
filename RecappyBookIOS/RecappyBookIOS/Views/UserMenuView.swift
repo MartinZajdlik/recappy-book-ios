@@ -8,6 +8,7 @@ struct UserMenuView: View {
     let onAddRecipe: () -> Void
     let onMyRecipes: () -> Void
     let onFavoriteRecipes: () -> Void
+    let onMealPlan: () -> Void
     let onDeleteProfile: () -> Void
     let onLogout: () -> Void
     let onExitGuest: () -> Void
@@ -47,6 +48,12 @@ struct UserMenuView: View {
                     menuButton(title: "Oblíbené recepty", icon: "star.fill") {
                         dismiss()
                         onFavoriteRecipes()
+                    }
+                }
+                if !isGuest {
+                    menuButton(title: "Jídelníček", icon: "calendar") {
+                        dismiss()
+                        onMealPlan()
                     }
                 }
             }
@@ -115,6 +122,7 @@ struct UserMenuView: View {
         onAddRecipe: {},
         onMyRecipes: {},
         onFavoriteRecipes: {},
+        onMealPlan: {},
         onDeleteProfile: {},
         onLogout: {},
         onExitGuest: {}

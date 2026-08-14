@@ -6,6 +6,7 @@ struct AdminView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var selectedTab: AdminTab = .recipes
     @State private var showUserMenu = false
+    @State private var showMealPlan = false
     @State private var pendingCount = 0
     
     enum AdminTab {
@@ -58,6 +59,9 @@ struct AdminView: View {
                         .background(AppTheme.background)
                 }
             }
+            .navigationDestination(isPresented: $showMealPlan) {
+                MealPlanView()
+            }
         }
         .task {
             await loadPendingCount()
@@ -79,6 +83,9 @@ struct AdminView: View {
                     print("Moje recepty později")
                 },
                 onFavoriteRecipes: {
+                },
+                onMealPlan: {
+                    showMealPlan = true
                 },
                 onDeleteProfile: {
                     print("Smazání profilu později")

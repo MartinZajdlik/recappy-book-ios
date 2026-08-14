@@ -10,6 +10,7 @@ struct ContentView: View {
     @State private var showMyRecipes = false
     @State private var showDeleteProfileAlert = false
     @State private var showFavoriteRecipes = false
+    @State private var showMealPlan = false
     
     var body: some View {
         
@@ -148,6 +149,9 @@ struct ContentView: View {
             .navigationDestination(isPresented: $showFavoriteRecipes) {
                 FavoriteRecipesView()
             }
+            .navigationDestination(isPresented: $showMealPlan) {
+                MealPlanView()
+            }
         }
         .task {
             await viewModel.loadRecipesIfNeeded()
@@ -166,6 +170,9 @@ struct ContentView: View {
                 },
                 onFavoriteRecipes: {
                     showFavoriteRecipes = true
+                },
+                onMealPlan: {
+                    showMealPlan = true
                 },
                 onDeleteProfile: {
                     showDeleteProfileAlert = true

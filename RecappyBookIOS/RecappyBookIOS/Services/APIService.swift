@@ -331,4 +331,41 @@ final class APIService {
         }
     }
 
+    // MARK: - MEAL PLAN
+
+    func fetchMealPlan() async throws -> [MealPlanEntry] {
+        let request = try APIClient.shared.makeRequest(
+            path: "/jidelnicek",
+            method: "GET",
+            requiresAuth: true
+        )
+
+        let (data, response) = try await APIClient.shared.send(request)
+
+        guard response.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode([MealPlanEntry].self, from: data)
+    }
+
+    func updateMealPlanDay(dayOfWeek: Int, entry: MealPlanUpdateRequest) async throws -> MealPlanEntry {
+        var request = try APIClient.shared.makeRequest(
+            path: "/jidelnicek/\(dayOfWeek)",
+            method: "PUT",
+            requiresAuth: true
+        )
+
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(entry)
+
+        let (data, response) = try await APIClient.shared.send(request)
+
+        guard response.statusCode == 200 else {
+            throw URLError(.badServerResponse)
+        }
+
+        return try JSONDecoder().decode(MealPlanEntry.self, from: data)
+    }
+
 }
