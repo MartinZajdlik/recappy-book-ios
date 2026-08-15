@@ -72,16 +72,23 @@ struct UserMenuView: View {
                         dismiss()
                         onLogout()
                     }
-
-                    if !isAdmin {
-                        menuButton(title: "Smazat profil", icon: "trash.fill", isDestructive: true) {
-                            dismiss()
-                            onDeleteProfile()
-                        }
-                    }
                 }
             }
-            
+
+            if !isGuest && !isAdmin {
+                Spacer().frame(height: 24)
+
+                Divider()
+                    .background(AppTheme.mutedText.opacity(0.3))
+
+                Spacer().frame(height: 24)
+
+                menuButton(title: "Smazat profil", icon: "trash.fill", isDestructive: true) {
+                    dismiss()
+                    onDeleteProfile()
+                }
+            }
+
             Spacer()
         }
         .padding()
