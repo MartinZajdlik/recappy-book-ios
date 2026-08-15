@@ -19,7 +19,7 @@ final class FavoriteRecipesViewModel: ObservableObject {
         do {
             recipes = try await APIService.shared.fetchFavoriteRecipes()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
 

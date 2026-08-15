@@ -19,12 +19,15 @@ struct MyRecipesView: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
 
                 if viewModel.isLoading {
-                    ProgressView()
+                    LoadingStateView(defaultMessage: "Načítám recepty...")
                 }
 
                 if let error = viewModel.errorMessage {
-                    Text(error)
-                        .foregroundStyle(.red)
+                    ErrorRetryView(message: error) {
+                        Task {
+                            await viewModel.loadRecipes()
+                        }
+                    }
                 }
 
                 ForEach(viewModel.recipes) { recipe in
@@ -73,7 +76,7 @@ struct MyRecipesView: View {
                             await viewModel.loadRecipes()
                             recipeToDelete = nil
                         } catch {
-                            viewModel.errorMessage = error.localizedDescription
+                            viewModel.errorMessage = error.userFacingMessage
                         }
                     }
                 }

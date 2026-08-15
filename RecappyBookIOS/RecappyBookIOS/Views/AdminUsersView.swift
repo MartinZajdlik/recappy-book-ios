@@ -20,14 +20,15 @@ struct AdminUsersView: View {
                 .padding(.horizontal)
             
             if viewModel.isLoading {
-                ProgressView("Načítám uživatele...")
-                    .foregroundStyle(AppTheme.text)
+                LoadingStateView(defaultMessage: "Načítám uživatele...")
             }
-            
+
             if let error = viewModel.errorMessage {
-                Text(error)
-                    .foregroundStyle(.red)
-                    .padding(.horizontal)
+                ErrorRetryView(message: error) {
+                    Task {
+                        await viewModel.loadUsers()
+                    }
+                }
             }
             
             LazyVStack(spacing: 14) {

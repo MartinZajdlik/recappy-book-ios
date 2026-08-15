@@ -30,7 +30,7 @@ final class AdminRecipesViewModel: ObservableObject {
         do {
             recipes = try await APIService.shared.fetchAllRecipesForAdmin()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
 
@@ -47,7 +47,7 @@ final class AdminRecipesViewModel: ObservableObject {
             try await APIService.shared.deleteRecipe(recipeId: recipe.id)
             await loadRecipes()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
     func loadRecipesIfNeeded() async {

@@ -19,19 +19,19 @@ final class AdminUsersViewModel: ObservableObject {
         do {
             users = try await APIService.shared.fetchAdminUsers()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
-    
+
     func deleteUser(_ user: AdminUser) async {
         do {
             try await APIService.shared.deleteUser(userId: user.id)
             await loadUsers()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
-    
+
     func changeRole(for user: AdminUser, to role: String) async {
         do {
             try await APIService.shared.changeUserRole(
@@ -40,7 +40,7 @@ final class AdminUsersViewModel: ObservableObject {
             )
             await loadUsers()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
 }

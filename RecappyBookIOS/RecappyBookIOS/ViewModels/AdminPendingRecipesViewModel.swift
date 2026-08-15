@@ -19,7 +19,7 @@ final class AdminPendingRecipesViewModel: ObservableObject {
         do {
             recipes = try await APIService.shared.fetchPendingRecipes()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
 
@@ -36,7 +36,7 @@ final class AdminPendingRecipesViewModel: ObservableObject {
             try await APIService.shared.deleteRecipe(recipeId: recipe.id)
             await loadRecipes()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
 
@@ -45,7 +45,7 @@ final class AdminPendingRecipesViewModel: ObservableObject {
             try await APIService.shared.approveRecipe(recipeId: recipe.id)
             await loadRecipes()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
 
@@ -54,7 +54,7 @@ final class AdminPendingRecipesViewModel: ObservableObject {
             try await APIService.shared.rejectRecipe(recipeId: recipe.id)
             await loadRecipes()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
 }

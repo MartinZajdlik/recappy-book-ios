@@ -57,14 +57,15 @@ struct AdminRecipesView: View {
             .padding(.horizontal, 10)
             
             if viewModel.isLoading {
-                ProgressView("Načítám recepty...")
-                    .foregroundStyle(AppTheme.text)
+                LoadingStateView(defaultMessage: "Načítám recepty...")
             }
-            
+
             if let error = viewModel.errorMessage {
-                Text(error)
-                    .foregroundStyle(.red)
-                    .padding(.horizontal)
+                ErrorRetryView(message: error) {
+                    Task {
+                        await viewModel.loadRecipes()
+                    }
+                }
             }
             
             LazyVStack(spacing: 14) {

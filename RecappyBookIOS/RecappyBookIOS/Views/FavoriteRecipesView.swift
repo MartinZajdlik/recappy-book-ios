@@ -16,13 +16,15 @@ struct FavoriteRecipesView: View {
                     .padding(.horizontal)
 
                 if viewModel.isLoading {
-                    ProgressView()
+                    LoadingStateView(defaultMessage: "Načítám recepty...")
                 }
 
                 if let error = viewModel.errorMessage {
-                    Text(error)
-                        .foregroundStyle(.red)
-                        .padding(.horizontal)
+                    ErrorRetryView(message: error) {
+                        Task {
+                            await viewModel.loadRecipes()
+                        }
+                    }
                 }
 
                 if !viewModel.isLoading && viewModel.recipes.isEmpty {

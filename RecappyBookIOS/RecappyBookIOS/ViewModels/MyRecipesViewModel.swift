@@ -19,7 +19,7 @@ final class MyRecipesViewModel: ObservableObject {
         do {
             recipes = try await APIService.shared.fetchMyRecipes()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
     func loadRecipesIfNeeded() async {
