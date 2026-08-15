@@ -17,9 +17,9 @@ struct UserMenuView: View {
     
     var body: some View {
         VStack(spacing: 24) {
-            
-            HeaderView(onLogoTap: {})
-            
+
+            Spacer().frame(height: 24)
+
             VStack(spacing: 8) {
                 Image("UserAvatar")
                     .resizable()
