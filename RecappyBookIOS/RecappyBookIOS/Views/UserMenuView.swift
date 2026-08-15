@@ -21,8 +21,11 @@ struct UserMenuView: View {
             HeaderView(onLogoTap: {})
             
             VStack(spacing: 8) {
-                Text("👨‍🍳")
-                    .font(.system(size: 46))
+                Image("UserAvatar")
+                    .resizable()
+                    .scaledToFill()
+                    .frame(width: 72, height: 72)
+                    .clipShape(Circle())
                 
                 Text(username)
                     .font(.title2.bold())

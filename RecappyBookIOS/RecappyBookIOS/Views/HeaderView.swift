@@ -54,8 +54,11 @@ struct HeaderView: View {
                         
                         HStack(spacing: 8) {
                             
-                            Text("👨‍🍳")
-                                .font(.title3)
+                            Image("UserAvatar")
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 24, height: 24)
+                                .clipShape(Circle())
                             
                             Text(username ?? "")
                                 .font(.caption.weight(.bold))
@@ -80,8 +83,11 @@ struct HeaderView: View {
                     
                 } else {
                     
-                    Text("👨‍🍳")
-                        .font(.title2)
+                    Image("UserAvatar")
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 28, height: 28)
+                        .clipShape(Circle())
                 }
             }
             
