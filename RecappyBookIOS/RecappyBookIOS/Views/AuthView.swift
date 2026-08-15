@@ -74,12 +74,16 @@ struct AuthView: View {
                 Text(viewModel.errorMessage)
                     .foregroundStyle(.red)
                     .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
             }
-            
+
             if !viewModel.successMessage.isEmpty {
                 Text(viewModel.successMessage)
                     .foregroundStyle(AppTheme.accent)
                     .multilineTextAlignment(.center)
+                    .lineLimit(nil)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             
             Button("Zapomněli jste heslo?") {

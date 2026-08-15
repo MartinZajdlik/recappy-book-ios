@@ -86,59 +86,77 @@ struct AdminUsersView: View {
 }
 
 struct AdminUserCardView: View {
-    
+
     let user: AdminUser
     let onRoleChange: (String) -> Void
     let onDelete: () -> Void
-    
+
+    @State private var isExpanded = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            
-            HStack {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(user.username)
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.text)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
-                    
-                    Text(user.email)
-                        .font(.subheadline)
+
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isExpanded.toggle()
+                }
+            } label: {
+                HStack {
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text(user.username)
+                            .font(.headline)
+                            .foregroundStyle(AppTheme.text)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+
+                        Text(user.email)
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.mutedText)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+
+                    Spacer()
+
+                    Text(user.role.replacingOccurrences(of: "ROLE_", with: ""))
+                        .font(.caption.bold())
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(user.role == "ROLE_ADMIN" ? AppTheme.blue : AppTheme.categoryCard)
+                        .foregroundStyle(.white)
+                        .clipShape(Capsule())
+
+                    Image(systemName: "chevron.down")
+                        .font(.caption.bold())
                         .foregroundStyle(AppTheme.mutedText)
-                        .lineLimit(1)
-                        .truncationMode(.tail)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }
-                
-                Spacer()
-                
-                Text(user.role.replacingOccurrences(of: "ROLE_", with: ""))
-                    .font(.caption.bold())
-                    .padding(.horizontal, 10)
-                    .padding(.vertical, 6)
-                    .background(user.role == "ROLE_ADMIN" ? AppTheme.blue : AppTheme.categoryCard)
-                    .foregroundStyle(.white)
-                    .clipShape(Capsule())
+                .contentShape(Rectangle())
             }
-            
-            HStack(spacing: 10) {
-                Button("USER") {
-                    onRoleChange("ROLE_USER")
+            .buttonStyle(.plain)
+
+            if isExpanded {
+                HStack(spacing: 10) {
+                    Button("USER") {
+                        onRoleChange("ROLE_USER")
+                    }
+                    .buttonStyle(.bordered)
+
+                    Button("ADMIN") {
+                        onRoleChange("ROLE_ADMIN")
+                    }
+                    .buttonStyle(.bordered)
+
+                    Spacer()
+
+                    Button(role: .destructive) {
+                        onDelete()
+                    } label: {
+                        Text("Smazat")
+                    }
+                    .buttonStyle(.borderedProminent)
                 }
-                .buttonStyle(.bordered)
-                
-                Button("ADMIN") {
-                    onRoleChange("ROLE_ADMIN")
-                }
-                .buttonStyle(.bordered)
-                
-                Spacer()
-                
-                Button(role: .destructive) {
-                    onDelete()
-                } label: {
-                    Text("Smazat")
-                }
-                .buttonStyle(.borderedProminent)
+                .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
         .padding()

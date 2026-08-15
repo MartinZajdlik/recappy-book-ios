@@ -166,12 +166,15 @@ struct ContentView: View {
                     showAddRecipe = true
                 },
                 onMyRecipes: {
+                    if authViewModel.guardGuest() { return }
                     showMyRecipes = true
                 },
                 onFavoriteRecipes: {
+                    if authViewModel.guardGuest() { return }
                     showFavoriteRecipes = true
                 },
                 onMealPlan: {
+                    if authViewModel.guardGuest() { return }
                     showMealPlan = true
                 },
                 onDeleteProfile: {
@@ -244,7 +247,7 @@ struct ContentView: View {
                 authViewModel.exitGuestMode()
             }
         } message: {
-            Text("Jako host nemůžeš přidávat recepty ani je ukládat do oblíbených. Zaregistruj se nebo se přihlas.")
+            Text("Jako host nemůžeš používat některé funkce. Zaregistruj se nebo se přihlas.")
         }
 
     }

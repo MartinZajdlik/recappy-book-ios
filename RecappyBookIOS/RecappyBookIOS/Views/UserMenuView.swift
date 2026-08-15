@@ -38,23 +38,21 @@ struct UserMenuView: View {
                     onAddRecipe()
                 }
                 
-                if !isGuest {
-                    menuButton(title: "Moje recepty", icon: "book.fill") {
-                        dismiss()
-                        onMyRecipes()
-                    }
+                menuButton(title: "Moje recepty", icon: "book.fill") {
+                    dismiss()
+                    onMyRecipes()
                 }
-                if !isAdmin && !isGuest {
+
+                if !isAdmin {
                     menuButton(title: "Oblíbené recepty", icon: "star.fill") {
                         dismiss()
                         onFavoriteRecipes()
                     }
                 }
-                if !isGuest {
-                    menuButton(title: "Jídelníček", icon: "calendar") {
-                        dismiss()
-                        onMealPlan()
-                    }
+
+                menuButton(title: "Jídelníček", icon: "calendar") {
+                    dismiss()
+                    onMealPlan()
                 }
             }
 

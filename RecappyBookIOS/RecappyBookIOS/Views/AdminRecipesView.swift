@@ -146,89 +146,108 @@ struct AdminRecipeCardView: View {
     var onApprove: (() -> Void)? = nil
     var onReject: (() -> Void)? = nil
 
+    @State private var isExpanded = false
+
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            
-            HStack(alignment: .top, spacing: 12) {
-                
-                AsyncImage(url: URL(string: optimizedImageUrl(recipe.imageUrl ?? "", width: 300))) { image in
-                    image
-                        .resizable()
-                        .scaledToFill()
-                } placeholder: {
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(AppTheme.categoryCard)
-                        .overlay(
-                            Image(systemName: "photo")
-                                .foregroundStyle(AppTheme.mutedText)
-                        )
+
+            Button {
+                withAnimation(.easeInOut(duration: 0.2)) {
+                    isExpanded.toggle()
                 }
-                .frame(width: 70, height: 70)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                
-                VStack(alignment: .leading, spacing: 6) {
-                    Text(recipe.title)
-                        .font(.headline)
-                        .foregroundStyle(AppTheme.text)
-                        .lineLimit(2)
+            } label: {
+                HStack(alignment: .top, spacing: 12) {
 
-                    HStack(spacing: 6) {
-                        Text(recipe.category ?? "Bez kategorie")
-                            .font(.caption.bold())
-                            .foregroundStyle(AppTheme.green)
-
-                        statusBadge
+                    AsyncImage(url: URL(string: optimizedImageUrl(recipe.imageUrl ?? "", width: 300))) { image in
+                        image
+                            .resizable()
+                            .scaledToFill()
+                    } placeholder: {
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(AppTheme.categoryCard)
+                            .overlay(
+                                Image(systemName: "photo")
+                                    .foregroundStyle(AppTheme.mutedText)
+                            )
                     }
+                    .frame(width: 70, height: 70)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
 
-                    if let author = recipe.authorUsername {
-                        Text("Autor: \(author)")
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(recipe.title)
+                            .font(.headline)
+                            .foregroundStyle(AppTheme.text)
+                            .lineLimit(2)
+
+                        HStack(spacing: 6) {
+                            Text(recipe.category ?? "Bez kategorie")
+                                .font(.caption.bold())
+                                .foregroundStyle(AppTheme.green)
+
+                            statusBadge
+                        }
+
+                        if let author = recipe.authorUsername {
+                            Text("Autor: \(author)")
+                                .font(.caption)
+                                .foregroundStyle(AppTheme.mutedText)
+                        }
+
+
+                        Text(recipe.ingredients ?? "")
                             .font(.caption)
                             .foregroundStyle(AppTheme.mutedText)
+                            .lineLimit(2)
                     }
 
-                    
-                    Text(recipe.ingredients ?? "")
-                        .font(.caption)
+                    Spacer()
+
+                    Image(systemName: "chevron.down")
+                        .font(.caption.bold())
                         .foregroundStyle(AppTheme.mutedText)
-                        .lineLimit(2)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
                 }
-                
-                Spacer()
+                .contentShape(Rectangle())
             }
-            
-            HStack(spacing: 8) {
-                Button("Zobrazit") {
-                    onShow()
-                }
-                .buttonStyle(.bordered)
-                
-                Button("Upravit") {
-                    onEdit()
-                }
-                .buttonStyle(.bordered)
-                
-                Spacer()
-                
-                Button(role: .destructive) {
-                    onDelete()
-                } label: {
-                    Text("Smazat")
-                }
-                .buttonStyle(.borderedProminent)
-            }
+            .buttonStyle(.plain)
 
-            if let onApprove, let onReject {
+            if isExpanded {
                 HStack(spacing: 8) {
-                    Button("Schválit") {
-                        onApprove()
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .tint(.green)
-
-                    Button("Zamítnout", role: .destructive) {
-                        onReject()
+                    Button("Zobrazit") {
+                        onShow()
                     }
                     .buttonStyle(.bordered)
+
+                    Button("Upravit") {
+                        onEdit()
+                    }
+                    .buttonStyle(.bordered)
+
+                    Spacer()
+
+                    Button(role: .destructive) {
+                        onDelete()
+                    } label: {
+                        Text("Smazat")
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .transition(.opacity.combined(with: .move(edge: .top)))
+
+                if let onApprove, let onReject {
+                    HStack(spacing: 8) {
+                        Button("Schválit") {
+                            onApprove()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.green)
+
+                        Button("Zamítnout", role: .destructive) {
+                            onReject()
+                        }
+                        .buttonStyle(.bordered)
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
         }

@@ -90,6 +90,8 @@ struct HeaderView: View {
                 .italic()
                 .foregroundStyle(AppTheme.green)
                 .multilineTextAlignment(.center)
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
         }
         .padding(.horizontal, 20)
         .padding(.top, 24)
