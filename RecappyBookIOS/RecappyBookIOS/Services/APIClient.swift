@@ -121,4 +121,15 @@ final class APIClient {
         ]
         return retryableCodes.contains(nsError.code)
     }
+
+    /// Sdílená detekce skutečné autentizační chyby (401/403 z backendu), tedy že token
+    /// je opravdu neplatný/vypršel – ne že selhalo síťové/serverové volání (viz `send`
+    /// výše, kde na 401 nejdřív zkusíme refresh tokenu; teprve neúspěšný refresh sem
+    /// propadne jako trvalá 401). Použij tuhle funkci všude, kde je potřeba rozlišit
+    /// "neplatný token" od "výpadek/timeout serveru", ať se logika nedubluje.
+    static func isAuthError(_ error: Error) -> Bool {
+        let nsError = error as NSError
+        guard nsError.domain != NSURLErrorDomain else { return false }
+        return nsError.code == 401 || nsError.code == 403
+    }
 }

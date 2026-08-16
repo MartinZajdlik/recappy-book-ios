@@ -164,8 +164,20 @@ final class AuthViewModel: ObservableObject {
                 isLoggedIn = true
                 
             } catch {
-                
-                logout()
+
+                if APIClient.isAuthError(error) {
+                    // Token je opravdu neplatný/vypršel (401/403 i po pokusu o refresh
+                    // v APIClient.send) → skutečné odhlášení.
+                    logout()
+                } else {
+                    // Síťová/serverová chyba (např. Render cold start, timeout, výpadek
+                    // spojení) – token může být stále platný. Neodhlašovat, jen
+                    // optimisticky obnovit session z lokálně uložených dat; appka se
+                    // pokusí ověřit/dotáhnout data znovu při dalším requestu (viz
+                    // retry/refresh logika v APIClient.send).
+                    role = UserDefaults.standard.string(forKey: "userRole")
+                    isLoggedIn = true
+                }
             }
         }
     }
