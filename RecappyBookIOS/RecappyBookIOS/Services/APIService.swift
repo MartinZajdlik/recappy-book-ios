@@ -6,12 +6,19 @@ final class APIService {
 
     private init() {}
 
-    func fetchRecipes() async throws -> [Recipe] {
+    /// Provede GET na `path` a rovnou dekóduje JSON odpověď; sdílí stejnou
+    /// kontrolu stavového kódu (200) napříč všemi jednoduchými fetch endpointy.
+    private func decodedGET<T: Decodable>(
+        _ path: String,
+        requiresAuth: Bool = true,
+        optionalAuth: Bool = false
+    ) async throws -> T {
 
         let request = try APIClient.shared.makeRequest(
-            path: "/recepty",
+            path: path,
             method: "GET",
-            optionalAuth: true
+            requiresAuth: requiresAuth,
+            optionalAuth: optionalAuth
         )
 
         let (data, response) = try await APIClient.shared.send(request)
@@ -20,23 +27,36 @@ final class APIService {
             throw URLError(.badServerResponse)
         }
 
-        return try JSONDecoder().decode([Recipe].self, from: data)
+        return try JSONDecoder().decode(T.self, from: data)
     }
 
-
-    func deleteRecipe(recipeId: Int64) async throws {
+    /// Provede akci bez těla odpovědi (delete/toggle/approve/…) a ověří, že
+    /// server vrátil jeden z očekávaných stavových kódů.
+    private func performAction(
+        _ path: String,
+        method: String,
+        acceptedStatusCodes: Set<Int> = [200]
+    ) async throws {
 
         let request = try APIClient.shared.makeRequest(
-            path: "/recepty/\(recipeId)",
-            method: "DELETE",
+            path: path,
+            method: method,
             requiresAuth: true
         )
 
         let (_, response) = try await APIClient.shared.send(request)
 
-        guard response.statusCode == 200 || response.statusCode == 204 else {
+        guard acceptedStatusCodes.contains(response.statusCode) else {
             throw URLError(.badServerResponse)
         }
+    }
+
+    func fetchRecipes() async throws -> [Recipe] {
+        try await decodedGET("/recepty", requiresAuth: false, optionalAuth: true)
+    }
+
+    func deleteRecipe(recipeId: Int64) async throws {
+        try await performAction("/recepty/\(recipeId)", method: "DELETE", acceptedStatusCodes: [200, 204])
     }
 
     func createRecipe(
@@ -160,193 +180,53 @@ final class APIService {
 
 
     func fetchAdminUsers() async throws -> [AdminUser] {
-
-        let request = try APIClient.shared.makeRequest(
-            path: "/admin/users",
-            method: "GET",
-            requiresAuth: true
-        )
-
-        let (data, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        return try JSONDecoder().decode([AdminUser].self, from: data)
+        try await decodedGET("/admin/users")
     }
 
     func changeUserRole(userId: Int64, role: String) async throws {
-
-        let request = try APIClient.shared.makeRequest(
-            path: "/admin/users/\(userId)/role?role=\(role)",
-            method: "PUT",
-            requiresAuth: true
-        )
-
-        let (_, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
+        try await performAction("/admin/users/\(userId)/role?role=\(role)", method: "PUT")
     }
 
     func deleteUser(userId: Int64) async throws {
-
-        let request = try APIClient.shared.makeRequest(
-            path: "/admin/users/\(userId)",
-            method: "DELETE",
-            requiresAuth: true
-        )
-
-        let (_, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
+        try await performAction("/admin/users/\(userId)", method: "DELETE")
     }
 
     func fetchMyRecipes() async throws -> [Recipe] {
-
-        var request = try APIClient.shared.makeRequest(
-            path: "/recepty/my",
-            requiresAuth: true
-        )
-
-        request.httpMethod = "GET"
-
-        let (data, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        return try JSONDecoder().decode([Recipe].self, from: data)
+        try await decodedGET("/recepty/my")
     }
+
     func fetchFavoriteRecipes() async throws -> [Recipe] {
-        let request = try APIClient.shared.makeRequest(
-            path: "/recepty/favorites",
-            method: "GET",
-            requiresAuth: true
-        )
-
-        let (data, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        return try JSONDecoder().decode([Recipe].self, from: data)
+        try await decodedGET("/recepty/favorites")
     }
 
     func toggleFavorite(recipeId: Int64) async throws {
-        let request = try APIClient.shared.makeRequest(
-            path: "/recepty/\(recipeId)/favorite",
-            method: "POST",
-            requiresAuth: true
-        )
-
-        let (_, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
+        try await performAction("/recepty/\(recipeId)/favorite", method: "POST")
     }
 
     func fetchAllRecipesForAdmin() async throws -> [Recipe] {
-
-        let request = try APIClient.shared.makeRequest(
-            path: "/admin/recepty",
-            method: "GET",
-            requiresAuth: true
-        )
-
-        let (data, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        return try JSONDecoder().decode([Recipe].self, from: data)
+        try await decodedGET("/admin/recepty")
     }
 
     func fetchPendingRecipes() async throws -> [Recipe] {
-
-        let request = try APIClient.shared.makeRequest(
-            path: "/admin/recepty/pending",
-            method: "GET",
-            requiresAuth: true
-        )
-
-        let (data, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        return try JSONDecoder().decode([Recipe].self, from: data)
+        try await decodedGET("/admin/recepty/pending")
     }
 
     func fetchPendingRecipesCount() async throws -> Int {
-        let request = try APIClient.shared.makeRequest(
-            path: "/admin/recepty/pending/count",
-            method: "GET",
-            requiresAuth: true
-        )
-
-        let (data, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        return try JSONDecoder().decode(Int.self, from: data)
+        try await decodedGET("/admin/recepty/pending/count")
     }
 
     func approveRecipe(recipeId: Int64) async throws {
-        let request = try APIClient.shared.makeRequest(
-            path: "/admin/recepty/\(recipeId)/approve",
-            method: "PATCH",
-            requiresAuth: true
-        )
-
-        let (_, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
+        try await performAction("/admin/recepty/\(recipeId)/approve", method: "PATCH")
     }
 
     func rejectRecipe(recipeId: Int64) async throws {
-        let request = try APIClient.shared.makeRequest(
-            path: "/admin/recepty/\(recipeId)/reject",
-            method: "PATCH",
-            requiresAuth: true
-        )
-
-        let (_, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
+        try await performAction("/admin/recepty/\(recipeId)/reject", method: "PATCH")
     }
 
     // MARK: - MEAL PLAN
 
     func fetchMealPlan() async throws -> [MealPlanEntry] {
-        let request = try APIClient.shared.makeRequest(
-            path: "/jidelnicek",
-            method: "GET",
-            requiresAuth: true
-        )
-
-        let (data, response) = try await APIClient.shared.send(request)
-
-        guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
-        }
-
-        return try JSONDecoder().decode([MealPlanEntry].self, from: data)
+        try await decodedGET("/jidelnicek")
     }
 
     func updateMealPlanDay(dayOfWeek: Int, entry: MealPlanUpdateRequest) async throws -> MealPlanEntry {

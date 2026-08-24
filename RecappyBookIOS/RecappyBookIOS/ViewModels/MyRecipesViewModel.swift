@@ -29,4 +29,13 @@ final class MyRecipesViewModel: ObservableObject {
 
         await loadRecipes()
     }
+
+    func deleteRecipe(_ recipe: Recipe) async {
+        do {
+            try await APIService.shared.deleteRecipe(recipeId: recipe.id)
+            await loadRecipes()
+        } catch {
+            errorMessage = error.userFacingMessage
+        }
+    }
 }

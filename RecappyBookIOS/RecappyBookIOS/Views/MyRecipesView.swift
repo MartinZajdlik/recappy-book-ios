@@ -71,13 +71,8 @@ struct MyRecipesView: View {
             Button("Smazat", role: .destructive) {
                 if let recipe = recipeToDelete {
                     Task {
-                        do {
-                            try await APIService.shared.deleteRecipe(recipeId: recipe.id)
-                            await viewModel.loadRecipes()
-                            recipeToDelete = nil
-                        } catch {
-                            viewModel.errorMessage = error.userFacingMessage
-                        }
+                        await viewModel.deleteRecipe(recipe)
+                        recipeToDelete = nil
                     }
                 }
             }

@@ -185,7 +185,7 @@ struct AdminRecipeCardView: View {
                                 .font(.caption.bold())
                                 .foregroundStyle(AppTheme.green)
 
-                            statusBadge
+                            RecipeStatusBadge(status: recipe.status)
                         }
 
                         if let author = recipe.authorUsername {
@@ -255,30 +255,6 @@ struct AdminRecipeCardView: View {
         .padding()
         .background(AppTheme.card)
         .clipShape(RoundedRectangle(cornerRadius: 14))
-    }
-
-    @ViewBuilder
-    private var statusBadge: some View {
-        switch recipe.status {
-        case .pending:
-            Text("čeká na schválení")
-                .font(.caption2.bold())
-                .foregroundStyle(.black)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(.orange)
-                .clipShape(Capsule())
-        case .rejected:
-            Text("zamítnuto")
-                .font(.caption2.bold())
-                .foregroundStyle(.white)
-                .padding(.horizontal, 6)
-                .padding(.vertical, 2)
-                .background(.red)
-                .clipShape(Capsule())
-        case .approved:
-            EmptyView()
-        }
     }
 }
 

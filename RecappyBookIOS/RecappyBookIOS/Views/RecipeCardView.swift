@@ -30,7 +30,7 @@ struct RecipeCardView: View {
                         .font(.subheadline)
                         .foregroundStyle(.white.opacity(0.8))
 
-                    statusBadge
+                    RecipeStatusBadge(status: recipe.status)
                 }
 
                 if let author = recipe.authorUsername {
@@ -64,10 +64,16 @@ struct RecipeCardView: View {
         )
         .padding(.horizontal, 14)
     }
+}
 
-    @ViewBuilder
-    private var statusBadge: some View {
-        switch recipe.status {
+/// Sdílený stavový štítek receptu (čeká na schválení / zamítnuto), použitý
+/// jak v uživatelském seznamu receptů, tak v adminově správě receptů.
+struct RecipeStatusBadge: View {
+
+    let status: RecipeStatus
+
+    var body: some View {
+        switch status {
         case .pending:
             Text("čeká na schválení")
                 .font(.caption2.bold())
