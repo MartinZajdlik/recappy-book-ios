@@ -6,25 +6,11 @@ struct AdminRecipesView: View {
     @State private var recipeToDelete: Recipe?
     @State private var showDeleteAlert = false
     @State private var recipeToShow: Recipe?
-    @State private var showAddForm = false
     @State private var recipeToEdit: Recipe?
-    
+
     var body: some View {
         VStack(spacing: 18) {
-            
-            Button {
-                showAddForm = true
-            } label: {
-                Text("+ Přidat recept")
-                    .font(.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(AppTheme.green)
-                    .foregroundStyle(.black)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
-            }
-            .padding(.horizontal)
-            
+
             Text("Správa receptů")
                 .font(.title2.bold())
                 .foregroundStyle(AppTheme.text)
@@ -107,25 +93,6 @@ struct AdminRecipesView: View {
         .navigationDestination(item: $recipeToShow) { recipe in
             RecipeDetailView(recipe: recipe)
         }
-        .sheet(isPresented: $showAddForm) {
-            NavigationStack {
-                RecipeFormView(recipe: nil) {
-                    Task {
-                        await viewModel.loadRecipes()
-                    }
-                }
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button {
-                            showAddForm = false
-                        } label: {
-                            Label("Zpět", systemImage: "chevron.left")
-                        }
-                    }
-                }
-            }
-        }
-
         .sheet(item: $recipeToEdit) { recipe in
             NavigationStack {
                 RecipeFormView(recipe: recipe) {

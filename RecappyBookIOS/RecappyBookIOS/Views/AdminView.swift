@@ -7,7 +7,10 @@ struct AdminView: View {
     @State private var selectedTab: AdminTab = .recipes
     @State private var showUserMenu = false
     @State private var showMealPlan = false
+    @State private var showAddRecipe = false
+    @State private var showMyRecipes = false
     @State private var pendingCount = 0
+    @State private var recipesRefreshToken = UUID()
     
     enum AdminTab {
         case recipes
@@ -62,6 +65,9 @@ struct AdminView: View {
             .navigationDestination(isPresented: $showMealPlan) {
                 MealPlanView()
             }
+            .navigationDestination(isPresented: $showMyRecipes) {
+                MyRecipesView()
+            }
         }
         .task {
             await loadPendingCount()
@@ -77,10 +83,10 @@ struct AdminView: View {
                 isAdmin: authViewModel.role == "ROLE_ADMIN",
                 isGuest: false,
                 onAddRecipe: {
-                    print("Admin přidat recept později")
+                    showAddRecipe = true
                 },
                 onMyRecipes: {
-                    print("Moje recepty později")
+                    showMyRecipes = true
                 },
                 onFavoriteRecipes: {
                 },
@@ -96,12 +102,30 @@ struct AdminView: View {
                 onExitGuest: {}
             )
         }
-        
-        
+        .sheet(isPresented: $showAddRecipe) {
+            NavigationStack {
+                RecipeFormView(recipe: nil) {}
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button {
+                                showAddRecipe = false
+                            } label: {
+                                Label("Zpět", systemImage: "chevron.left")
+                            }
+                        }
+                    }
+            }
+        }
+        .onChange(of: showAddRecipe) { _, isPresented in
+            if !isPresented {
+                recipesRefreshToken = UUID()
+            }
+        }
     }
-    
+
     private var adminRecipesSection: some View {
         AdminRecipesView()
+            .id(recipesRefreshToken)
     }
 
     private var adminPendingRecipesSection: some View {
