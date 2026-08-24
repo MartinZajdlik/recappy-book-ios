@@ -42,16 +42,16 @@ final class APIClient {
     }
 
     /// Prodlevy mezi automatickými pokusy o zopakování požadavku po síťové chybě
-    /// (v sekundách). Render free tier umí probouzet se ze spánku desítky sekund,
-    /// takže součet prodlev musí pokrýt i delší cold start.
-    private let networkRetryDelaysSeconds: [UInt64] = [5, 10, 15]
+    /// (v sekundách). Render free tier umí probouzet se ze spánku 45-60s (JVM start
+    /// + spin-up kontejneru), takže součet prodlev musí pokrýt i delší cold start.
+    private let networkRetryDelaysSeconds: [UInt64] = [10, 15, 20, 20]
 
     /// Provede request; pokud dostane 401 a je k dispozici refresh token, tiše obnoví
     /// access token a request jednou zopakuje. Díky tomu appka nenutí uživatele k novému
     /// přihlášení jen kvůli tomu, že access token mezitím vypršel.
     ///
     /// Síťové chyby (např. odpověď bez HTTPURLResponse, timeout, ztráta spojení) se
-    /// navíc automaticky zkouší zopakovat až 3x s rostoucí prodlevou (5s, 10s, 15s),
+    /// navíc automaticky zkouší zopakovat až 4x s rostoucí prodlevou (10s, 15s, 20s, 20s),
     /// aby appka ustála i pomalejší probouzení Render backendu ze spánku. Tahle logika
     /// se netýká 401/refresh tokenu výše, ta zůstává beze změny.
     func send(_ request: URLRequest, retryOnAuthFailure: Bool = true) async throws -> (Data, HTTPURLResponse) {

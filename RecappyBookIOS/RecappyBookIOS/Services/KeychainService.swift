@@ -52,7 +52,10 @@ final class KeychainService {
             kSecValueData as String: data
         ]
 
-        SecItemAdd(query as CFDictionary, nil)
+        let status = SecItemAdd(query as CFDictionary, nil)
+        if status != errSecSuccess {
+            print("KeychainService: SecItemAdd selhal pro klíč '\(key)' s OSStatus \(status)")
+        }
     }
 
     private func get(forKey key: String) -> String? {
@@ -78,6 +81,9 @@ final class KeychainService {
             kSecAttrAccount as String: key
         ]
 
-        SecItemDelete(query as CFDictionary)
+        let status = SecItemDelete(query as CFDictionary)
+        if status != errSecSuccess && status != errSecItemNotFound {
+            print("KeychainService: SecItemDelete selhal pro klíč '\(key)' s OSStatus \(status)")
+        }
     }
 }
