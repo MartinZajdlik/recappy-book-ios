@@ -19,7 +19,7 @@ final class MealPlanViewModel: ObservableObject {
         do {
             entries = try await APIService.shared.fetchMealPlan()
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
         }
     }
 
@@ -65,7 +65,7 @@ final class MealPlanViewModel: ObservableObject {
 
             return true
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = error.userFacingMessage
             return false
         }
     }
