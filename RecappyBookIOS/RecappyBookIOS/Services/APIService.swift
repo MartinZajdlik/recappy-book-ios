@@ -24,7 +24,7 @@ final class APIService {
         let (data, response) = try await APIClient.shared.send(request)
 
         guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+            throw APIService.serverError(status: response.statusCode, data: data)
         }
 
         return try JSONDecoder().decode(T.self, from: data)
@@ -44,11 +44,19 @@ final class APIService {
             requiresAuth: true
         )
 
-        let (_, response) = try await APIClient.shared.send(request)
+        let (data, response) = try await APIClient.shared.send(request)
 
         guard acceptedStatusCodes.contains(response.statusCode) else {
-            throw URLError(.badServerResponse)
+            throw APIService.serverError(status: response.statusCode, data: data)
         }
+    }
+
+    /// Sestaví chybu se skutečným HTTP stavovým kódem a tělem odpovědi ze serveru,
+    /// aby volající (a chybové hlášky v UI) viděly opravdovou příčinu (401, 500, …)
+    /// místo generického `URLError(.badServerResponse)`.
+    private static func serverError(status: Int, data: Data) -> NSError {
+        let message = String(data: data, encoding: .utf8) ?? "Neznámá chyba"
+        return NSError(domain: "", code: status, userInfo: [NSLocalizedDescriptionKey: message])
     }
 
     func fetchRecipes() async throws -> [Recipe] {
@@ -137,7 +145,7 @@ final class APIService {
         let (data, response) = try await APIClient.shared.send(request)
 
         guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+            throw APIService.serverError(status: response.statusCode, data: data)
         }
 
         return try JSONDecoder().decode(Recipe.self, from: data)
@@ -242,7 +250,7 @@ final class APIService {
         let (data, response) = try await APIClient.shared.send(request)
 
         guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+            throw APIService.serverError(status: response.statusCode, data: data)
         }
 
         return try JSONDecoder().decode(MealPlanEntry.self, from: data)

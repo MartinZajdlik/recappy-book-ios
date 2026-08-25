@@ -156,10 +156,15 @@ final class AuthService {
             requiresAuth: true
         )
 
-        let (_, response) = try await APIClient.shared.send(request)
+        let (data, response) = try await APIClient.shared.send(request)
 
         guard response.statusCode == 200 else {
-            throw URLError(.badServerResponse)
+            let errorMessage = String(data: data, encoding: .utf8) ?? "Neznámá chyba"
+            throw NSError(
+                domain: "",
+                code: response.statusCode,
+                userInfo: [NSLocalizedDescriptionKey: errorMessage]
+            )
         }
     }
 
@@ -185,9 +190,26 @@ final class AuthService {
 
         let (data, response) = try await URLSession.shared.data(for: request)
 
-        guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
-            KeychainService.shared.clearSession()
-            throw NSError(domain: "", code: 401, userInfo: [NSLocalizedDescriptionKey: "Přihlášení vypršelo."])
+        guard let httpResponse = response as? HTTPURLResponse else {
+            throw URLError(.badServerResponse)
+        }
+
+        guard httpResponse.statusCode == 200 else {
+            let errorMessage = String(data: data, encoding: .utf8) ?? "Neznámá chyba"
+
+            // Session se maže jen na skutečně neplatný/odvolaný refresh token (401/403
+            // z backendu). Jiné chyby (např. 500 z přechodné kolize při rotaci tokenu,
+            // nebo výpadek sítě) session nemažou – token v Keychainu může být pořád
+            // platný a příští pokus o refresh může uspět, viz `RefreshCoordinator`.
+            if httpResponse.statusCode == 401 || httpResponse.statusCode == 403 {
+                KeychainService.shared.clearSession()
+            }
+
+            throw NSError(
+                domain: "",
+                code: httpResponse.statusCode,
+                userInfo: [NSLocalizedDescriptionKey: errorMessage]
+            )
         }
 
         let decoded = try JSONDecoder().decode(LoginResponse.self, from: data)

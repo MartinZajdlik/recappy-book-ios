@@ -64,7 +64,7 @@ final class APIClient {
             return (data, httpResponse)
         }
 
-        guard let newAccessToken = try? await AuthService.shared.refreshAccessToken() else {
+        guard let newAccessToken = try? await refreshCoordinator.refresh() else {
             return (data, httpResponse)
         }
 
@@ -73,6 +73,8 @@ final class APIClient {
 
         return try await sendWithNetworkRetry(retriedRequest)
     }
+
+    private let refreshCoordinator = RefreshCoordinator()
 
     private func sendWithNetworkRetry(_ request: URLRequest) async throws -> (Data, HTTPURLResponse) {
         var lastError: Error = URLError(.badServerResponse)
@@ -131,5 +133,35 @@ final class APIClient {
         let nsError = error as NSError
         guard nsError.domain != NSURLErrorDomain else { return false }
         return nsError.code == 401 || nsError.code == 403
+    }
+}
+
+/// Zajišťuje, že v jeden okamžik běží nanejvýš jedno volání `/auth/refresh`.
+///
+/// Bez tohohle: když appka provede víc autentizovaných požadavků těsně po sobě
+/// (např. dvojtap na "oblíbit" nebo přechod mezi obrazovkami) a access token
+/// mezitím vyprší (teď jen 15 min TTL), každý z nich dostane 401 a nezávisle
+/// spustí `AuthService.refreshAccessToken()` se STEJNÝM, dosud nerotovaným
+/// refresh tokenem z Keychainu. Backend rotuje refresh tokeny na jedno použití
+/// (`RefreshTokenService.rotate`), takže druhé souběžné volání dostane chybu
+/// místo nového tokenu – i když první volání mezitím uspělo a uložilo platnou
+/// novou session. Serializací přes tenhle actor druhé (a další) volání jen
+/// počkají na výsledek toho prvního, místo aby si samo posílalo vlastní
+/// `/auth/refresh` požadavek.
+actor RefreshCoordinator {
+    private var inFlight: Task<String, Error>?
+
+    func refresh() async throws -> String {
+        if let inFlight {
+            return try await inFlight.value
+        }
+
+        let task = Task<String, Error> {
+            try await AuthService.shared.refreshAccessToken()
+        }
+        inFlight = task
+        defer { inFlight = nil }
+
+        return try await task.value
     }
 }
