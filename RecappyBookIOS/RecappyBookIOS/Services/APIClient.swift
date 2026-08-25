@@ -46,18 +46,20 @@ final class APIClient {
     /// + spin-up kontejneru), takže součet prodlev musí pokrýt i delší cold start.
     private let networkRetryDelaysSeconds: [UInt64] = [10, 15, 20, 20]
 
-    /// Provede request; pokud dostane 401 a je k dispozici refresh token, tiše obnoví
-    /// access token a request jednou zopakuje. Díky tomu appka nenutí uživatele k novému
-    /// přihlášení jen kvůli tomu, že access token mezitím vypršel.
+    /// Provede request; pokud dostane 401 nebo 403 a je k dispozici refresh token, tiše
+    /// obnoví access token a request jednou zopakuje. Díky tomu appka nenutí uživatele
+    /// k novému přihlášení jen kvůli tomu, že access token mezitím vypršel - backend na
+    /// prošlý/chybějící token může vracet i 403 (ne jen 401), viz `SecurityConfig` na
+    /// serveru, proto se kontrolují oba stavové kódy.
     ///
     /// Síťové chyby (např. odpověď bez HTTPURLResponse, timeout, ztráta spojení) se
     /// navíc automaticky zkouší zopakovat až 4x s rostoucí prodlevou (10s, 15s, 20s, 20s),
     /// aby appka ustála i pomalejší probouzení Render backendu ze spánku. Tahle logika
-    /// se netýká 401/refresh tokenu výše, ta zůstává beze změny.
+    /// se netýká 401/403 refreshe výše, ta zůstává beze změny.
     func send(_ request: URLRequest, retryOnAuthFailure: Bool = true) async throws -> (Data, HTTPURLResponse) {
         let (data, httpResponse) = try await sendWithNetworkRetry(request)
 
-        guard httpResponse.statusCode == 401,
+        guard httpResponse.statusCode == 401 || httpResponse.statusCode == 403,
               retryOnAuthFailure,
               request.value(forHTTPHeaderField: "Authorization") != nil,
               KeychainService.shared.getRefreshToken() != nil else {
