@@ -11,6 +11,12 @@ struct MealPlanView: View {
 
     @StateObject private var viewModel = MealPlanViewModel()
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var contentMaxWidth: CGFloat? {
+        horizontalSizeClass == .regular ? 560 : nil
+    }
+
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
@@ -54,7 +60,9 @@ struct MealPlanView: View {
                     }
                 }
                 .padding(.horizontal)
+                .frame(maxWidth: contentMaxWidth)
             }
+            .frame(maxWidth: .infinity)
             .padding(.top)
         }
         .background(AppTheme.background)

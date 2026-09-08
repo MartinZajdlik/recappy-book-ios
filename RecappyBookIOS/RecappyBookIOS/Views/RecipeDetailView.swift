@@ -5,6 +5,12 @@ struct RecipeDetailView: View {
 
     let recipe: Recipe
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var imageHeight: CGFloat {
+        horizontalSizeClass == .regular ? 380 : 220
+    }
+
     @State private var isScreenAwakeEnabled: Bool = false
     @State private var willResignActiveObserver: NSObjectProtocol?
     @State private var didBecomeActiveObserver: NSObjectProtocol?
@@ -37,13 +43,13 @@ struct RecipeDetailView: View {
                         case .empty:
                             ProgressView()
                                 .frame(maxWidth: .infinity)
-                                .frame(height: 220)
+                                .frame(height: imageHeight)
 
                         case .success(let image):
                             image
                                 .resizable()
                                 .scaledToFill()
-                                .frame(height: 220)
+                                .frame(height: imageHeight)
                                 .clipShape(RoundedRectangle(cornerRadius: 14))
 
                         case .failure:

@@ -17,6 +17,13 @@ struct HeaderView: View {
         self.onLogoTap = onLogoTap
         self.onUserMenuTap = onUserMenuTap
     }
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var isPad: Bool { horizontalSizeClass == .regular }
+    private var logoIconSize: CGFloat { isPad ? 44 : 34 }
+    private var logoTitleSize: CGFloat { isPad ? 32 : 26 }
+    private var logoSubtitleSize: CGFloat { isPad ? 17 : 14 }
     
     var body: some View {
         VStack(spacing: 22) {
@@ -25,18 +32,18 @@ struct HeaderView: View {
                 Button(action: { onLogoTap?() }) {
                     HStack(spacing: 10) {
                         Image(systemName: "book.pages.fill")
-                            .font(.system(size: 34, weight: .bold))
+                            .font(.system(size: logoIconSize, weight: .bold))
                             .foregroundStyle(Color(white: 0.95))
 
                         VStack(alignment: .leading, spacing: -2) {
                             Text("RecAPPy")
-                                .font(.system(size: 26, weight: .heavy))
+                                .font(.system(size: logoTitleSize, weight: .heavy))
                                 .foregroundStyle(Color(white: 0.95))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.8)
 
                             Text("B O O K")
-                                .font(.system(size: 14, weight: .bold))
+                                .font(.system(size: logoSubtitleSize, weight: .bold))
                                 .kerning(3)
                                 .foregroundStyle(Color(white: 0.95))
                         }

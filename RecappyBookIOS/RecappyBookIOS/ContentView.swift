@@ -260,6 +260,12 @@ struct ContentView: View {
 struct DailyTipCardView: View {
     
     let recipe: Recipe
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var imageHeight: CGFloat {
+        horizontalSizeClass == .regular ? 380 : 220
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -284,7 +290,7 @@ struct DailyTipCardView: View {
                         ProgressView()
                     }
                 }
-                .frame(height: 220)
+                .frame(height: imageHeight)
                 .frame(maxWidth: .infinity)
                 .clipShape(RoundedRectangle(cornerRadius: 18))
             }

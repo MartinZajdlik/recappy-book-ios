@@ -5,6 +5,12 @@ struct AuthView: View {
     @ObservedObject var viewModel: AuthViewModel
     @State private var isRegisterMode = false
     @State private var showForgotPassword = false
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var formMaxWidth: CGFloat? {
+        horizontalSizeClass == .regular ? 460 : nil
+    }
     
     var body: some View {
         VStack(spacing: 24) {
@@ -69,6 +75,7 @@ struct AuthView: View {
                 }
                 .disabled(viewModel.isLoading)
             }
+            .frame(maxWidth: formMaxWidth)
             
             if !viewModel.errorMessage.isEmpty {
                 Text(viewModel.errorMessage)
@@ -124,6 +131,7 @@ struct AuthView: View {
                     }
                     .disabled(viewModel.isLoading)
                 }
+                .frame(maxWidth: formMaxWidth)
             }
             
             Spacer()

@@ -14,6 +14,12 @@ struct MealPlanDayView: View {
     @State private var draftSnack2 = ""
     @State private var draftDinner = ""
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var contentMaxWidth: CGFloat? {
+        horizontalSizeClass == .regular ? 560 : nil
+    }
+
     private var currentEntry: MealPlanEntry {
         viewModel.entry(forDay: dayOfWeek)
     }
@@ -87,7 +93,9 @@ struct MealPlanDayView: View {
                 }
             }
             .padding()
+            .frame(maxWidth: contentMaxWidth)
         }
+        .frame(maxWidth: .infinity)
         .background(AppTheme.background)
     }
 
