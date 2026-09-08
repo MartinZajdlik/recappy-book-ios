@@ -206,6 +206,7 @@ struct ContentView: View {
                     }
                 }
             }
+            .presentationSizing(.page)
         }
         .onChange(of: showAddRecipe) { _, isPresented in
             if !isPresented {
