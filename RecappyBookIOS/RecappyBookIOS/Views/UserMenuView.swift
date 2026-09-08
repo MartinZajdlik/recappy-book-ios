@@ -16,6 +16,7 @@ struct UserMenuView: View {
     @Environment(\.dismiss) private var dismiss
 
     private let privacyPolicyURL = URL(string: "https://martinzajdlik.github.io/recappy-book-legal/")!
+    private let termsOfUseURL = URL(string: "https://martinzajdlik.github.io/recappy-book-legal/terms.html")!
     
     var body: some View {
         VStack(spacing: 24) {
@@ -91,12 +92,17 @@ struct UserMenuView: View {
                 }
             }
 
-            Link(destination: privacyPolicyURL) {
-                Text("Ochrana osobních údajů")
-                    .font(.footnote)
-                    .foregroundStyle(AppTheme.mutedText)
-                    .underline()
+            HStack(spacing: 16) {
+                Link(destination: privacyPolicyURL) {
+                    Text("Ochrana osobních údajů").underline()
+                }
+                Text("·")
+                Link(destination: termsOfUseURL) {
+                    Text("Podmínky použití").underline()
+                }
             }
+            .font(.footnote)
+            .foregroundStyle(AppTheme.mutedText)
             .padding(.top, 4)
 
             Spacer()
