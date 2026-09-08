@@ -14,9 +14,18 @@ struct UserMenuView: View {
     let onExitGuest: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private let privacyPolicyURL = URL(string: "https://martinzajdlik.github.io/recappy-book-legal/")!
     private let termsOfUseURL = URL(string: "https://martinzajdlik.github.io/recappy-book-legal/terms.html")!
+
+    private var isPad: Bool { horizontalSizeClass == .regular }
+    private var avatarSize: CGFloat { isPad ? 110 : 72 }
+    private var usernameFont: Font { isPad ? .largeTitle.bold() : .title2.bold() }
+    private var menuFont: Font { isPad ? .title2 : .headline }
+    private var menuIconFont: Font { isPad ? .title2 : .headline }
+    private var footerLinkFont: Font { isPad ? .callout : .footnote }
+    private var contentMaxWidth: CGFloat? { isPad ? 460 : nil }
     
     var body: some View {
         VStack(spacing: 24) {
@@ -27,15 +36,15 @@ struct UserMenuView: View {
                 Image("UserAvatar")
                     .resizable()
                     .scaledToFill()
-                    .frame(width: 72, height: 72)
+                    .frame(width: avatarSize, height: avatarSize)
                     .clipShape(Circle())
                 
                 Text(username)
-                    .font(.title2.bold())
+                    .font(usernameFont)
                     .foregroundStyle(AppTheme.green)
                     .lineLimit(1)
                     .truncationMode(.tail)
-                    .frame(maxWidth: 260)
+                    .frame(maxWidth: isPad ? 360 : 260)
             }
             
             VStack(spacing: 14) {
@@ -101,13 +110,15 @@ struct UserMenuView: View {
                     Text("Podmínky použití").underline()
                 }
             }
-            .font(.footnote)
+            .font(footerLinkFont)
             .foregroundStyle(AppTheme.mutedText)
             .padding(.top, 4)
 
             Spacer()
         }
         .padding()
+        .frame(maxWidth: contentMaxWidth)
+        .frame(maxWidth: .infinity)
         .background(AppTheme.background)
     }
     
@@ -118,18 +129,18 @@ struct UserMenuView: View {
         action: @escaping () -> Void
     ) -> some View {
         Button(action: action) {
-            HStack(spacing: 12) {
+            HStack(spacing: isPad ? 16 : 12) {
                 Image(systemName: icon)
-                    .font(.headline)
+                    .font(menuIconFont)
                 
                 Text(title)
-                    .font(.headline)
+                    .font(menuFont)
                 
                 Spacer()
                 
         
             }
-            .padding()
+            .padding(isPad ? 20 : 16)
             .background(AppTheme.card)
             .foregroundStyle(isDestructive ? .red : AppTheme.text)
             .clipShape(RoundedRectangle(cornerRadius: 14))

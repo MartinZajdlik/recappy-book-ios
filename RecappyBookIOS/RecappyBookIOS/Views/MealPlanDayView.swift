@@ -17,7 +17,7 @@ struct MealPlanDayView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private var contentMaxWidth: CGFloat? {
-        horizontalSizeClass == .regular ? 560 : nil
+        horizontalSizeClass == .regular ? 940 : nil
     }
 
     private var currentEntry: MealPlanEntry {

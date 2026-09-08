@@ -135,8 +135,9 @@ struct ContentView: View {
                 }
                 .padding(.top, 0)
             }
+            .fixScrollViewTapDelay()
             .background(AppTheme.background)
-            .toolbar(.hidden, for: .navigationBar)
+            .toolbarVisibility(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
                 if verticalSizeClass != .compact {
                     FooterView()

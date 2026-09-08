@@ -18,6 +18,12 @@ struct RecipeFormView: View {
     @State private var selectedImageData: Data?
     
     let categories = ["Polévky", "Hlavní jídla", "Dezerty", "Snídaně", "Ostatní"]
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var isPad: Bool { horizontalSizeClass == .regular }
+    private var contentMaxWidth: CGFloat? { isPad ? 940 : nil }
+    private var fieldFont: Font? { isPad ? .title3 : nil }
     
     var isEditMode: Bool {
         recipe != nil
@@ -25,16 +31,17 @@ struct RecipeFormView: View {
     
     var body: some View {
         ScrollView {
-            VStack(spacing: 18) {
+            VStack(spacing: isPad ? 22 : 18) {
                 
                 Text(isEditMode ? "Upravit recept" : "Přidat recept")
-                    .font(.title2.bold())
+                    .font(isPad ? .largeTitle.bold() : .title2.bold())
                     .foregroundStyle(AppTheme.green)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 TextField("Název receptu", text: $title)
                     .textFieldStyle(.plain)
-                    .padding()
+                    .font(fieldFont)
+                    .padding(isPad ? 18 : 12)
                     .background(AppTheme.card)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
                     .foregroundStyle(AppTheme.text)
@@ -96,9 +103,9 @@ struct RecipeFormView: View {
                         Image(systemName: "camera")
                         Text(selectedImageData == nil ? "Vybrat obrázek" : "Obrázek vybrán")
                     }
-                    .font(.headline)
+                    .font(isPad ? .title3.weight(.semibold) : .headline)
                     .frame(maxWidth: .infinity)
-                    .padding()
+                    .padding(isPad ? 18 : 12)
                     .background(AppTheme.card)
                     .foregroundStyle(AppTheme.text)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -123,9 +130,9 @@ struct RecipeFormView: View {
                             .padding()
                     } else {
                         Text(isEditMode ? "Uložit změny" : "Přidat recept")
-                            .font(.headline)
+                            .font(isPad ? .title3.weight(.semibold) : .headline)
                             .frame(maxWidth: .infinity)
-                            .padding()
+                            .padding(isPad ? 18 : 12)
                     }
                 }
                 .background(AppTheme.green)
@@ -142,7 +149,9 @@ struct RecipeFormView: View {
                 }
             }
             .padding()
+            .frame(maxWidth: contentMaxWidth)
         }
+        .frame(maxWidth: .infinity)
         .background(AppTheme.background)
         .dismissKeyboardOnTap()
         .onAppear {

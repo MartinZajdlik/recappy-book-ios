@@ -21,9 +21,12 @@ struct HeaderView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private var isPad: Bool { horizontalSizeClass == .regular }
-    private var logoIconSize: CGFloat { isPad ? 44 : 34 }
-    private var logoTitleSize: CGFloat { isPad ? 32 : 26 }
-    private var logoSubtitleSize: CGFloat { isPad ? 17 : 14 }
+    private var logoIconSize: CGFloat { isPad ? 56 : 34 }
+    private var logoTitleSize: CGFloat { isPad ? 40 : 26 }
+    private var logoSubtitleSize: CGFloat { isPad ? 20 : 14 }
+    private var avatarSize: CGFloat { isPad ? 40 : 24 }
+    private var noControlsAvatarSize: CGFloat { isPad ? 44 : 28 }
+    private var userButtonNameMaxWidth: CGFloat { isPad ? 140 : 90 }
     
     var body: some View {
         VStack(spacing: 22) {
@@ -64,21 +67,21 @@ struct HeaderView: View {
                             Image("UserAvatar")
                                 .resizable()
                                 .scaledToFill()
-                                .frame(width: 24, height: 24)
+                                .frame(width: avatarSize, height: avatarSize)
                                 .clipShape(Circle())
                             
                             Text(username ?? "")
-                                .font(.caption.weight(.bold))
+                                .font(isPad ? .headline : .caption.weight(.bold))
                                 .lineLimit(1)
                                 .truncationMode(.tail)
-                                .frame(maxWidth: 90)
+                                .frame(maxWidth: userButtonNameMaxWidth)
                             
                             Image(systemName: "line.3.horizontal")
-                                .font(.caption)
+                                .font(isPad ? .title3 : .caption)
                         }
                         .foregroundStyle(AppTheme.green)
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 8)
+                        .padding(.horizontal, isPad ? 16 : 10)
+                        .padding(.vertical, isPad ? 12 : 8)
                         .background(AppTheme.card)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
@@ -93,7 +96,7 @@ struct HeaderView: View {
                     Image("UserAvatar")
                         .resizable()
                         .scaledToFill()
-                        .frame(width: 28, height: 28)
+                        .frame(width: noControlsAvatarSize, height: noControlsAvatarSize)
                         .clipShape(Circle())
                 }
             }

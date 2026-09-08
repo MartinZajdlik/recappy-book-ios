@@ -5,20 +5,28 @@ struct CategoryButtonView: View {
     let title: String
     let icon: String
     let action: () -> Void
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
+    private var isPad: Bool { horizontalSizeClass == .regular }
+    private var cardWidth: CGFloat { isPad ? 92 : 62 }
+    private var cardHeight: CGFloat { isPad ? 106 : 72 }
+    private var iconSize: CGFloat { isPad ? 30 : 20 }
+    private var titleSize: CGFloat { isPad ? 15 : 11 }
     
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 8) {
+            VStack(spacing: isPad ? 10 : 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 20, weight: .semibold))
+                    .font(.system(size: iconSize, weight: .semibold))
                     .foregroundStyle(.white)
                 
                 Text(title)
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: titleSize, weight: .bold))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
             }
-            .frame(width: 62, height: 72)
+            .frame(width: cardWidth, height: cardHeight)
             .background(AppTheme.categoryCard)
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .contentShape(Rectangle())
