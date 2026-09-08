@@ -14,6 +14,8 @@ struct UserMenuView: View {
     let onExitGuest: () -> Void
 
     @Environment(\.dismiss) private var dismiss
+
+    private let privacyPolicyURL = URL(string: "https://martinzajdlik.github.io/recappy-book-legal/")!
     
     var body: some View {
         VStack(spacing: 24) {
@@ -88,6 +90,14 @@ struct UserMenuView: View {
                     onDeleteProfile()
                 }
             }
+
+            Link(destination: privacyPolicyURL) {
+                Text("Ochrana osobních údajů")
+                    .font(.footnote)
+                    .foregroundStyle(AppTheme.mutedText)
+                    .underline()
+            }
+            .padding(.top, 4)
 
             Spacer()
         }
