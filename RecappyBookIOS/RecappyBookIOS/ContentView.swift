@@ -135,7 +135,6 @@ struct ContentView: View {
                 }
                 .padding(.top, 0)
             }
-            .fixScrollViewTapDelay()
             .background(AppTheme.background)
             .toolbarVisibility(.hidden, for: .navigationBar)
             .safeAreaInset(edge: .bottom) {
