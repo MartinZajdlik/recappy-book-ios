@@ -55,7 +55,6 @@ struct AdminView: View {
                 .padding(.top, 0)
             }
             .background(AppTheme.background)
-            .toolbarVisibility(.hidden, for: .navigationBar)
             .trulyHideNavigationBar()
             .safeAreaInset(edge: .bottom) {
                 if verticalSizeClass != .compact {
