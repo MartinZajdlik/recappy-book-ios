@@ -15,6 +15,7 @@ struct RecipeDetailView: View {
     @State private var willResignActiveObserver: NSObjectProtocol?
     @State private var didBecomeActiveObserver: NSObjectProtocol?
 
+    @State private var showAuthorActions = false
     @State private var showReportConfirm = false
     @State private var showBlockConfirm = false
     @State private var moderationMessage: String?
@@ -40,22 +41,14 @@ struct RecipeDetailView: View {
                             .foregroundStyle(AppTheme.mutedText)
 
                         if canModerateAuthor {
-                            Menu {
-                                Button {
-                                    showReportConfirm = true
-                                } label: {
-                                    Label("Nahlásit recept", systemImage: "flag")
-                                }
-
-                                Button(role: .destructive) {
-                                    showBlockConfirm = true
-                                } label: {
-                                    Label("Zablokovat uživatele", systemImage: "person.crop.circle.badge.xmark")
-                                }
+                            Button {
+                                showAuthorActions = true
                             } label: {
                                 Image(systemName: "ellipsis.circle")
                                     .font(.subheadline)
                                     .foregroundStyle(AppTheme.mutedText)
+                                    .padding(8)
+                                    .contentShape(Rectangle())
                             }
                             .disabled(isSubmittingModerationAction)
                         }
@@ -182,6 +175,19 @@ struct RecipeDetailView: View {
                 NotificationCenter.default.removeObserver(token)
                 didBecomeActiveObserver = nil
             }
+        }
+        .confirmationDialog(
+            "Recept od \(recipe.authorUsername ?? "uživatele")",
+            isPresented: $showAuthorActions,
+            titleVisibility: .visible
+        ) {
+            Button("Nahlásit recept") {
+                showReportConfirm = true
+            }
+            Button("Zablokovat uživatele", role: .destructive) {
+                showBlockConfirm = true
+            }
+            Button("Zrušit", role: .cancel) {}
         }
         .alert("Opravdu nahlásit tento recept?", isPresented: $showReportConfirm) {
             Button("Zrušit", role: .cancel) {}
