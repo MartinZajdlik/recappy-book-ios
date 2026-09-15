@@ -36,15 +36,17 @@ struct AdminView: View {
                        
                     )
                     
-                    ScrollView(.horizontal, showsIndicators: false) {
+                    VStack(spacing: 10) {
                         HStack(spacing: 10) {
                             adminTabButton(icon: "list.bullet.clipboard", title: "Recepty", tab: .recipes)
-                            adminTabButton(icon: "clock", title: "Ke schválení", tab: .pending)
-                            adminTabButton(icon: "flag", title: "Nahlášené", tab: .reported)
                             adminTabButton(icon: "person.2", title: "Uživatelé", tab: .users)
                         }
-                        .padding(.horizontal)
+                        HStack(spacing: 10) {
+                            adminTabButton(icon: "clock", title: "Ke schválení", tab: .pending)
+                            adminTabButton(icon: "flag", title: "Nahlášené", tab: .reported)
+                        }
                     }
+                    .padding(.horizontal)
 
                     if selectedTab == .recipes {
                         adminRecipesSection
@@ -190,9 +192,10 @@ struct AdminView: View {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
                     .lineLimit(1)
+                    .minimumScaleFactor(0.85)
             }
-            .fixedSize(horizontal: true, vertical: false)
-            .padding(.horizontal, 14)
+            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 12)
             .padding(.vertical, 10)
             .background(selectedTab == tab ? AppTheme.green : AppTheme.card)
             .foregroundStyle(selectedTab == tab ? .black : .white)
