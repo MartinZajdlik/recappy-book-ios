@@ -10,11 +10,13 @@ struct AdminView: View {
     @State private var showAddRecipe = false
     @State private var showMyRecipes = false
     @State private var pendingCount = 0
+    @State private var reportedCount = 0
     @State private var recipesRefreshToken = UUID()
     
     enum AdminTab {
         case recipes
         case pending
+        case reported
         case users
     }
     
@@ -36,6 +38,7 @@ struct AdminView: View {
                     HStack(spacing: 12) {
                         adminTabButton(title: "📋 Recepty", tab: .recipes)
                         adminTabButton(title: "🕓 Ke schválení", tab: .pending)
+                        adminTabButton(title: "🚩 Nahlášené", tab: .reported)
                         adminTabButton(title: "👤 Uživatelé", tab: .users)
                     }
                     .padding(.horizontal)
@@ -44,6 +47,8 @@ struct AdminView: View {
                         adminRecipesSection
                     } else if selectedTab == .pending {
                         adminPendingRecipesSection
+                    } else if selectedTab == .reported {
+                        adminReportedRecipesSection
                     } else {
                         adminUsersSection
                     }
@@ -71,10 +76,12 @@ struct AdminView: View {
         }
         .task {
             await loadPendingCount()
+            await loadReportedCount()
         }
         .onChange(of: selectedTab) { _, _ in
             Task {
                 await loadPendingCount()
+                await loadReportedCount()
             }
         }
         .sheet(isPresented: $showUserMenu) {
@@ -136,14 +143,34 @@ struct AdminView: View {
         }
     }
 
+    private var adminReportedRecipesSection: some View {
+        AdminReportedRecipesView {
+            Task {
+                await loadReportedCount()
+            }
+        }
+    }
+
     private func loadPendingCount() async {
         pendingCount = (try? await APIService.shared.fetchPendingRecipesCount()) ?? pendingCount
+    }
+
+    private func loadReportedCount() async {
+        reportedCount = (try? await APIService.shared.fetchReportedRecipesCount()) ?? reportedCount
     }
 
     private var adminUsersSection: some View {
         AdminUsersView()
     }
     
+    private func badgeCount(for tab: AdminTab) -> Int? {
+        switch tab {
+        case .pending: return pendingCount
+        case .reported: return reportedCount
+        default: return nil
+        }
+    }
+
     private func adminTabButton(title: String, tab: AdminTab) -> some View {
         Button {
             selectedTab = tab
@@ -158,8 +185,8 @@ struct AdminView: View {
                 .foregroundStyle(selectedTab == tab ? .black : .white)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
                 .overlay(alignment: .topTrailing) {
-                    if tab == .pending && pendingCount > 0 {
-                        Text(pendingCount > 99 ? "99+" : "\(pendingCount)")
+                    if let badgeCount = badgeCount(for: tab), badgeCount > 0 {
+                        Text(badgeCount > 99 ? "99+" : "\(badgeCount)")
                             .font(.system(size: 11, weight: .bold))
                             .foregroundStyle(.white)
                             .padding(.horizontal, 6)

@@ -113,6 +113,8 @@ struct AdminRecipeCardView: View {
     let onDelete: () -> Void
     var onApprove: (() -> Void)? = nil
     var onReject: (() -> Void)? = nil
+    var reportCount: Int? = nil
+    var onDismissReport: (() -> Void)? = nil
 
     @State private var isExpanded = false
 
@@ -153,6 +155,12 @@ struct AdminRecipeCardView: View {
                                 .foregroundStyle(AppTheme.green)
 
                             RecipeStatusBadge(status: recipe.status)
+
+                            if let reportCount, reportCount > 0 {
+                                Text("🚩 \(reportCount)×")
+                                    .font(.caption.bold())
+                                    .foregroundStyle(.red)
+                            }
                         }
 
                         if let author = recipe.authorUsername {
@@ -214,6 +222,19 @@ struct AdminRecipeCardView: View {
                             onReject()
                         }
                         .buttonStyle(.bordered)
+                    }
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+                }
+
+                if let onDismissReport {
+                    HStack(spacing: 8) {
+                        Button("Ponechat") {
+                            onDismissReport()
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .tint(.green)
+
+                        Spacer()
                     }
                     .transition(.opacity.combined(with: .move(edge: .top)))
                 }

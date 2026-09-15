@@ -2,6 +2,7 @@ import Foundation
 
 struct Recipe: Identifiable, Codable, Hashable {
     let id: Int64
+    let authorId: Int64?
     let title: String
     let ingredients: String?
     let instructions: String?
@@ -13,6 +14,7 @@ struct Recipe: Identifiable, Codable, Hashable {
 
     enum CodingKeys: String, CodingKey {
         case id
+        case authorId
         case title
         case ingredients
         case instructions
@@ -25,6 +27,7 @@ struct Recipe: Identifiable, Codable, Hashable {
 
     init(
         id: Int64,
+        authorId: Int64? = nil,
         title: String,
         ingredients: String?,
         instructions: String?,
@@ -35,6 +38,7 @@ struct Recipe: Identifiable, Codable, Hashable {
         status: RecipeStatus = .approved
     ) {
         self.id = id
+        self.authorId = authorId
         self.title = title
         self.ingredients = ingredients
         self.instructions = instructions
@@ -49,6 +53,7 @@ struct Recipe: Identifiable, Codable, Hashable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         id = try container.decode(Int64.self, forKey: .id)
+        authorId = try container.decodeIfPresent(Int64.self, forKey: .authorId)
         title = try container.decode(String.self, forKey: .title)
         ingredients = try container.decodeIfPresent(String.self, forKey: .ingredients)
         instructions = try container.decodeIfPresent(String.self, forKey: .instructions)

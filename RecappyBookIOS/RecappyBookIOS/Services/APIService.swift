@@ -231,6 +231,36 @@ final class APIService {
         try await performAction("/admin/recepty/\(recipeId)/reject", method: "PATCH")
     }
 
+    // MARK: - NAHLÁŠENÍ A BLOKOVÁNÍ
+
+    func reportRecipe(recipeId: Int64) async throws {
+        try await performAction("/recepty/\(recipeId)/report", method: "POST")
+    }
+
+    func blockUser(userId: Int64) async throws {
+        try await performAction("/users/\(userId)/block", method: "POST")
+    }
+
+    func unblockUser(userId: Int64) async throws {
+        try await performAction("/users/\(userId)/block", method: "DELETE")
+    }
+
+    func fetchBlockedUsers() async throws -> [BlockedUser] {
+        try await decodedGET("/users/blocked")
+    }
+
+    func fetchReportedRecipes() async throws -> [ReportedRecipe] {
+        try await decodedGET("/admin/recepty/reports")
+    }
+
+    func fetchReportedRecipesCount() async throws -> Int {
+        try await decodedGET("/admin/recepty/reports/count")
+    }
+
+    func dismissRecipeReports(recipeId: Int64) async throws {
+        try await performAction("/admin/recepty/reports/\(recipeId)/dismiss", method: "PATCH")
+    }
+
     // MARK: - MEAL PLAN
 
     func fetchMealPlan() async throws -> [MealPlanEntry] {

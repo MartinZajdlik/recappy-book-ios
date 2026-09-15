@@ -15,6 +15,11 @@ struct RecipeDetailView: View {
     @State private var willResignActiveObserver: NSObjectProtocol?
     @State private var didBecomeActiveObserver: NSObjectProtocol?
 
+    @State private var showReportConfirm = false
+    @State private var showBlockConfirm = false
+    @State private var moderationMessage: String?
+    @State private var isSubmittingModerationAction = false
+
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 18) {
@@ -29,9 +34,32 @@ struct RecipeDetailView: View {
                     .foregroundStyle(.white.opacity(0.75))
                 
                 if let author = recipe.authorUsername {
-                    Text("Autor: \(author)")
-                        .font(.subheadline)
-                        .foregroundStyle(AppTheme.mutedText)
+                    HStack(spacing: 6) {
+                        Text("Autor: \(author)")
+                            .font(.subheadline)
+                            .foregroundStyle(AppTheme.mutedText)
+
+                        if canModerateAuthor {
+                            Menu {
+                                Button {
+                                    showReportConfirm = true
+                                } label: {
+                                    Label("Nahlásit recept", systemImage: "flag")
+                                }
+
+                                Button(role: .destructive) {
+                                    showBlockConfirm = true
+                                } label: {
+                                    Label("Zablokovat uživatele", systemImage: "person.crop.circle.badge.xmark")
+                                }
+                            } label: {
+                                Image(systemName: "ellipsis.circle")
+                                    .font(.subheadline)
+                                    .foregroundStyle(AppTheme.mutedText)
+                            }
+                            .disabled(isSubmittingModerationAction)
+                        }
+                    }
                 }
                 
                 if let imageUrl = recipe.imageUrl,
@@ -154,6 +182,69 @@ struct RecipeDetailView: View {
                 NotificationCenter.default.removeObserver(token)
                 didBecomeActiveObserver = nil
             }
+        }
+        .alert("Opravdu nahlásit tento recept?", isPresented: $showReportConfirm) {
+            Button("Zrušit", role: .cancel) {}
+            Button("Nahlásit", role: .destructive) {
+                Task { await reportRecipe() }
+            }
+        } message: {
+            Text("Recept prověří administrátor appky.")
+        }
+        .alert("Opravdu zablokovat uživatele \(recipe.authorUsername ?? "")?", isPresented: $showBlockConfirm) {
+            Button("Zrušit", role: .cancel) {}
+            Button("Zablokovat", role: .destructive) {
+                Task { await blockAuthor() }
+            }
+        } message: {
+            Text("Jeho recepty se ti přestanou zobrazovat.")
+        }
+        .alert(
+            moderationMessage ?? "",
+            isPresented: Binding(
+                get: { moderationMessage != nil },
+                set: { isPresented in if !isPresented { moderationMessage = nil } }
+            )
+        ) {
+            Button("OK", role: .cancel) {}
+        }
+    }
+
+    /// Nahlásit/zablokovat dává smysl jen u cizího receptu a jen přihlášenému
+    /// uživateli (host bez účtu nemá koho nahlásit "jako").
+    private var canModerateAuthor: Bool {
+        guard KeychainService.shared.getToken() != nil else { return false }
+        guard let author = recipe.authorUsername else { return false }
+        let currentUsername = UserDefaults.standard.string(forKey: "currentUsername")
+        return author != currentUsername
+    }
+
+    private func reportRecipe() async {
+        isSubmittingModerationAction = true
+        defer { isSubmittingModerationAction = false }
+
+        do {
+            try await APIService.shared.reportRecipe(recipeId: recipe.id)
+            moderationMessage = "Recept byl nahlášen, děkujeme."
+        } catch {
+            moderationMessage = "Nahlášení se nepodařilo odeslat. Zkus to prosím znovu."
+        }
+    }
+
+    private func blockAuthor() async {
+        guard let authorId = recipe.authorId else {
+            moderationMessage = "Uživatele se nepodařilo zablokovat."
+            return
+        }
+
+        isSubmittingModerationAction = true
+        defer { isSubmittingModerationAction = false }
+
+        do {
+            try await APIService.shared.blockUser(userId: authorId)
+            moderationMessage = "Uživatel byl zablokován. Jeho recepty se ti dál nebudou zobrazovat."
+        } catch {
+            moderationMessage = "Zablokování se nepodařilo. Zkus to prosím znovu."
         }
     }
 }
