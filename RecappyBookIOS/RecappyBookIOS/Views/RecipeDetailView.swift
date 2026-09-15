@@ -35,24 +35,9 @@ struct RecipeDetailView: View {
                     .foregroundStyle(.white.opacity(0.75))
                 
                 if let author = recipe.authorUsername {
-                    HStack(spacing: 6) {
-                        Text("Autor: \(author)")
-                            .font(.subheadline)
-                            .foregroundStyle(AppTheme.mutedText)
-
-                        if canModerateAuthor {
-                            Button {
-                                showAuthorActions = true
-                            } label: {
-                                Image(systemName: "ellipsis.circle")
-                                    .font(.subheadline)
-                                    .foregroundStyle(AppTheme.mutedText)
-                                    .padding(8)
-                                    .contentShape(Rectangle())
-                            }
-                            .disabled(isSubmittingModerationAction)
-                        }
-                    }
+                    Text("Autor: \(author)")
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.mutedText)
                 }
                 
                 if let imageUrl = recipe.imageUrl,
@@ -123,6 +108,17 @@ struct RecipeDetailView: View {
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
+            if canModerateAuthor {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        showAuthorActions = true
+                    } label: {
+                        Image(systemName: "ellipsis.circle")
+                    }
+                    .disabled(isSubmittingModerationAction)
+                }
+            }
+
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button {
                     isScreenAwakeEnabled.toggle()
