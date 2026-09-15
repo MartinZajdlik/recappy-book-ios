@@ -8,6 +8,17 @@ final class FavoriteRecipesViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        NotificationCenter.default.publisher(for: .userDidBlockAuthor)
+            .sink { [weak self] notification in
+                guard let authorId = notification.userInfo?["authorId"] as? Int64 else { return }
+                self?.recipes.removeAll { $0.authorId == authorId }
+            }
+            .store(in: &cancellables)
+    }
+
     func loadRecipes() async {
         isLoading = true
         errorMessage = nil

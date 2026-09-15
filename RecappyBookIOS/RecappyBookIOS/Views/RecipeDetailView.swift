@@ -244,6 +244,11 @@ struct RecipeDetailView: View {
 
         do {
             try await APIService.shared.blockUser(userId: authorId)
+            NotificationCenter.default.post(
+                name: .userDidBlockAuthor,
+                object: nil,
+                userInfo: ["authorId": authorId]
+            )
             moderationMessage = "Uživatel byl zablokován. Jeho recepty se ti dál nebudou zobrazovat."
         } catch {
             moderationMessage = "Zablokování se nepodařilo. Zkus to prosím znovu."

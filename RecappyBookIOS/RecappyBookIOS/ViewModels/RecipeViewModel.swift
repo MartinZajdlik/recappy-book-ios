@@ -9,6 +9,26 @@ final class RecipeViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var selectedCategory: String? = nil
     @Published var dailyTip: Recipe?
+
+    private var cancellables = Set<AnyCancellable>()
+
+    init() {
+        NotificationCenter.default.publisher(for: .userDidBlockAuthor)
+            .sink { [weak self] notification in
+                guard let authorId = notification.userInfo?["authorId"] as? Int64 else { return }
+                self?.removeRecipes(fromAuthorId: authorId)
+            }
+            .store(in: &cancellables)
+    }
+
+    /// Okamžité (optimistické) odebrání receptů od právě zablokovaného
+    /// autora – bez čekání na další fetch/restart appky.
+    func removeRecipes(fromAuthorId authorId: Int64) {
+        recipes.removeAll { $0.authorId == authorId }
+        if dailyTip?.authorId == authorId {
+            dailyTip = recipes.randomElement()
+        }
+    }
     
     var filteredRecipes: [Recipe] {
         guard let selectedCategory else {
