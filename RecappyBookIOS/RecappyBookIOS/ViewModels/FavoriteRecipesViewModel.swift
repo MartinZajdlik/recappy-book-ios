@@ -17,6 +17,12 @@ final class FavoriteRecipesViewModel: ObservableObject {
                 self?.recipes.removeAll { $0.authorId == authorId }
             }
             .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .userDidUnblockAuthor)
+            .sink { [weak self] _ in
+                Task { await self?.loadRecipes() }
+            }
+            .store(in: &cancellables)
     }
 
     func loadRecipes() async {

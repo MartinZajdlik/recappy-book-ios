@@ -36,13 +36,15 @@ struct AdminView: View {
                        
                     )
                     
-                    HStack(spacing: 12) {
-                        adminTabButton(title: "📋 Recepty", tab: .recipes)
-                        adminTabButton(title: "🕓 Ke schválení", tab: .pending)
-                        adminTabButton(title: "🚩 Nahlášené", tab: .reported)
-                        adminTabButton(title: "👤 Uživatelé", tab: .users)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 10) {
+                            adminTabButton(icon: "list.bullet.clipboard", title: "Recepty", tab: .recipes)
+                            adminTabButton(icon: "clock", title: "Ke schválení", tab: .pending)
+                            adminTabButton(icon: "flag", title: "Nahlášené", tab: .reported)
+                            adminTabButton(icon: "person.2", title: "Uživatelé", tab: .users)
+                        }
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
 
                     if selectedTab == .recipes {
                         adminRecipesSection
@@ -178,31 +180,35 @@ struct AdminView: View {
         }
     }
 
-    private func adminTabButton(title: String, tab: AdminTab) -> some View {
+    private func adminTabButton(icon: String, title: String, tab: AdminTab) -> some View {
         Button {
             selectedTab = tab
         } label: {
-            Text(title)
-                .font(.headline)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 12)
-                .background(selectedTab == tab ? AppTheme.green : AppTheme.card)
-                .foregroundStyle(selectedTab == tab ? .black : .white)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
-                .overlay(alignment: .topTrailing) {
-                    if let badgeCount = badgeCount(for: tab), badgeCount > 0 {
-                        Text(badgeCount > 99 ? "99+" : "\(badgeCount)")
-                            .font(.system(size: 11, weight: .bold))
-                            .foregroundStyle(.white)
-                            .padding(.horizontal, 6)
-                            .padding(.vertical, 2)
-                            .background(Color.red)
-                            .clipShape(Capsule())
-                            .offset(x: 10, y: -10)
-                    }
+            HStack(spacing: 6) {
+                Image(systemName: icon)
+                    .font(.subheadline)
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
+            }
+            .fixedSize(horizontal: true, vertical: false)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .background(selectedTab == tab ? AppTheme.green : AppTheme.card)
+            .foregroundStyle(selectedTab == tab ? .black : .white)
+            .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(alignment: .topTrailing) {
+                if let badgeCount = badgeCount(for: tab), badgeCount > 0 {
+                    Text(badgeCount > 99 ? "99+" : "\(badgeCount)")
+                        .font(.system(size: 11, weight: .bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 2)
+                        .background(Color.red)
+                        .clipShape(Capsule())
+                        .offset(x: 8, y: -8)
                 }
+            }
         }
     }
 }

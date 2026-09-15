@@ -27,6 +27,11 @@ final class BlockedUsersViewModel: ObservableObject {
         do {
             try await APIService.shared.unblockUser(userId: user.id)
             blockedUsers.removeAll { $0.id == user.id }
+            NotificationCenter.default.post(
+                name: .userDidUnblockAuthor,
+                object: nil,
+                userInfo: ["authorId": user.id]
+            )
         } catch {
             errorMessage = error.userFacingMessage
         }

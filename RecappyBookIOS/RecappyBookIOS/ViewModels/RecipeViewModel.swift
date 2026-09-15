@@ -19,6 +19,12 @@ final class RecipeViewModel: ObservableObject {
                 self?.removeRecipes(fromAuthorId: authorId)
             }
             .store(in: &cancellables)
+
+        NotificationCenter.default.publisher(for: .userDidUnblockAuthor)
+            .sink { [weak self] _ in
+                Task { await self?.loadRecipes() }
+            }
+            .store(in: &cancellables)
     }
 
     /// Okamžité (optimistické) odebrání receptů od právě zablokovaného
