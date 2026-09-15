@@ -9,6 +9,7 @@ struct AdminView: View {
     @State private var showMealPlan = false
     @State private var showAddRecipe = false
     @State private var showMyRecipes = false
+    @State private var showBlockedUsers = false
     @State private var pendingCount = 0
     @State private var reportedCount = 0
     @State private var recipesRefreshToken = UUID()
@@ -73,6 +74,9 @@ struct AdminView: View {
             .navigationDestination(isPresented: $showMyRecipes) {
                 MyRecipesView()
             }
+            .navigationDestination(isPresented: $showBlockedUsers) {
+                BlockedUsersView()
+            }
         }
         .task {
             await loadPendingCount()
@@ -99,6 +103,9 @@ struct AdminView: View {
                 },
                 onMealPlan: {
                     showMealPlan = true
+                },
+                onBlockedUsers: {
+                    showBlockedUsers = true
                 },
                 onDeleteProfile: {
                     print("Smazání profilu později")

@@ -11,6 +11,7 @@ struct ContentView: View {
     @State private var showDeleteProfileAlert = false
     @State private var showFavoriteRecipes = false
     @State private var showMealPlan = false
+    @State private var showBlockedUsers = false
     
     var body: some View {
         
@@ -152,6 +153,9 @@ struct ContentView: View {
             .navigationDestination(isPresented: $showMealPlan) {
                 MealPlanView()
             }
+            .navigationDestination(isPresented: $showBlockedUsers) {
+                BlockedUsersView()
+            }
         }
         .task {
             await viewModel.loadRecipesIfNeeded()
@@ -176,6 +180,10 @@ struct ContentView: View {
                 onMealPlan: {
                     if authViewModel.guardGuest() { return }
                     showMealPlan = true
+                },
+                onBlockedUsers: {
+                    if authViewModel.guardGuest() { return }
+                    showBlockedUsers = true
                 },
                 onDeleteProfile: {
                     showDeleteProfileAlert = true

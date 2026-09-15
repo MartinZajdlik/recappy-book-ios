@@ -9,6 +9,7 @@ struct UserMenuView: View {
     let onMyRecipes: () -> Void
     let onFavoriteRecipes: () -> Void
     let onMealPlan: () -> Void
+    let onBlockedUsers: () -> Void
     let onDeleteProfile: () -> Void
     let onLogout: () -> Void
     let onExitGuest: () -> Void
@@ -68,6 +69,13 @@ struct UserMenuView: View {
                 menuButton(title: "Jídelníček", icon: "calendar") {
                     dismiss()
                     onMealPlan()
+                }
+
+                if !isGuest {
+                    menuButton(title: "Zablokovaní uživatelé", icon: "person.crop.circle.badge.xmark") {
+                        dismiss()
+                        onBlockedUsers()
+                    }
                 }
             }
 
@@ -158,6 +166,7 @@ struct UserMenuView: View {
         onMyRecipes: {},
         onFavoriteRecipes: {},
         onMealPlan: {},
+        onBlockedUsers: {},
         onDeleteProfile: {},
         onLogout: {},
         onExitGuest: {}
