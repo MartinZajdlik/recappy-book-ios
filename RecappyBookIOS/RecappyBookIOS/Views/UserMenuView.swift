@@ -31,7 +31,7 @@ struct UserMenuView: View {
     var body: some View {
         VStack(spacing: 24) {
 
-            Spacer().frame(height: 24)
+            Spacer().frame(height: 48)
 
             VStack(spacing: 8) {
                 Image("UserAvatar")
