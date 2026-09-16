@@ -29,9 +29,19 @@ struct UserMenuView: View {
     private var contentMaxWidth: CGFloat? { isPad ? 460 : nil }
     
     var body: some View {
+        GeometryReader { proxy in
+            ScrollView {
+                menuContent
+                    .frame(minHeight: proxy.size.height)
+            }
+        }
+        .background(AppTheme.background)
+    }
+
+    private var menuContent: some View {
         VStack(spacing: 24) {
 
-            Spacer().frame(height: 48)
+            Spacer().frame(height: 24)
 
             VStack(spacing: 8) {
                 Image("UserAvatar")
@@ -127,7 +137,6 @@ struct UserMenuView: View {
         .padding()
         .frame(maxWidth: contentMaxWidth)
         .frame(maxWidth: .infinity)
-        .background(AppTheme.background)
     }
     
     private func menuButton(
