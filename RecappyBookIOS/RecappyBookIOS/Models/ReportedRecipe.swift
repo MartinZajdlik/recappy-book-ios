@@ -11,6 +11,18 @@ struct ReportedRecipe: Identifiable, Codable, Hashable {
     let imageUrl: String?
     let authorUsername: String?
     let reportCount: Int
+    /// Kdo a kdy recept nahlásil. Nepovinné – starší backend pole neposílá.
+    let reporters: [Reporter]?
+
+    struct Reporter: Codable, Hashable {
+        let username: String
+        /// Epoch milisekundy z backendu.
+        let reportedAt: Int64
+
+        var date: Date {
+            Date(timeIntervalSince1970: TimeInterval(reportedAt) / 1000)
+        }
+    }
 
     /// Aby šel snadno zobrazit ve stávající AdminRecipeCardView (očekává Recipe).
     var asRecipe: Recipe {

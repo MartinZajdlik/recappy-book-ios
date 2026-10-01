@@ -121,6 +121,7 @@ struct AdminRecipeCardView: View {
     var onApprove: (() -> Void)? = nil
     var onReject: (() -> Void)? = nil
     var reportCount: Int? = nil
+    var reporters: [ReportedRecipe.Reporter]? = nil
     var onDismissReport: (() -> Void)? = nil
 
     @State private var isExpanded = false
@@ -194,6 +195,10 @@ struct AdminRecipeCardView: View {
             }
             .buttonStyle(.plain)
 
+            if let reporters, !reporters.isEmpty {
+                reportersBox(reporters)
+            }
+
             if isExpanded {
                 HStack(spacing: 8) {
                     Button("Zobrazit") {
@@ -250,6 +255,43 @@ struct AdminRecipeCardView: View {
         .padding()
         .background(AppTheme.card)
         .clipShape(RoundedRectangle(cornerRadius: 14))
+    }
+
+    /// Seznam uživatelů, kteří recept nahlásili (jen v adminově záložce Nahlášené).
+    private func reportersBox(_ reporters: [ReportedRecipe.Reporter]) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Label("Nahlásili", systemImage: "flag.fill")
+                .font(.caption.bold())
+                .foregroundStyle(AppTheme.green)
+
+            ForEach(reporters, id: \.self) { reporter in
+                HStack(spacing: 8) {
+                    Image(systemName: "person.fill")
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.green)
+
+                    Text(reporter.username)
+                        .font(.subheadline)
+                        .foregroundStyle(AppTheme.text)
+                        .lineLimit(1)
+                        .truncationMode(.tail)
+
+                    Spacer(minLength: 8)
+
+                    Text(reporter.date.formatted(date: .numeric, time: .shortened))
+                        .font(.caption)
+                        .foregroundStyle(AppTheme.mutedText)
+                }
+            }
+        }
+        .padding(12)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(AppTheme.categoryCard)
+        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .stroke(AppTheme.green.opacity(0.35), lineWidth: 1)
+        )
     }
 }
 

@@ -6,11 +6,17 @@
 //
 
 import SwiftUI
+import UIKit
 
 @main
 struct RecappyBookIOSApp: App {
     
     @StateObject private var authViewModel = AuthViewModel()
+    
+    init() {
+        // Načítací kolečko při stažení seznamu dolů – výchozí šedá na tmavém pozadí zaniká.
+        UIRefreshControl.appearance().tintColor = UIColor(AppTheme.green)
+    }
     
     var body: some Scene {
         WindowGroup {

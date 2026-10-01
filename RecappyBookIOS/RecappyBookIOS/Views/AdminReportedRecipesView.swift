@@ -53,6 +53,7 @@ struct AdminReportedRecipesView: View {
                             showDeleteAlert = true
                         },
                         reportCount: report.reportCount,
+                        reporters: report.reporters,
                         onDismissReport: {
                             Task {
                                 await viewModel.dismiss(report)
