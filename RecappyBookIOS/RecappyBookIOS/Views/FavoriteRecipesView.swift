@@ -52,11 +52,19 @@ struct FavoriteRecipesView: View {
             .padding(.top)
         }
         .background(AppTheme.background)
+        .autoRefresh {
+            await viewModel.loadRecipes()
+        }
         .task {
             await viewModel.loadRecipesIfNeeded()
         }
         .navigationDestination(item: $recipeToShow) { recipe in
-            RecipeDetailView(recipe: recipe)
+            RecipeDetailView(
+                recipe: recipe,
+                onToggleFavorite: {
+                    await viewModel.toggleFavoriteFromDetail(for: recipe)
+                }
+            )
         }
     }
 }

@@ -5,6 +5,10 @@ struct RecipeDetailView: View {
 
     let recipe: Recipe
 
+    /// Přepne oblíbenost receptu. Vrací nový stav, nebo `nil`, když se nic nezměnilo
+    /// (host, chyba sítě). Když je `nil`, hvězdička se v detailu nezobrazí (admin obrazovky).
+    var onToggleFavorite: (() async -> Bool?)? = nil
+
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     private var imageHeight: CGFloat {
@@ -20,6 +24,13 @@ struct RecipeDetailView: View {
     @State private var showBlockConfirm = false
     @State private var moderationMessage: String?
     @State private var isSubmittingModerationAction = false
+
+    @State private var favoriteOverride: Bool?
+    @State private var isTogglingFavorite = false
+
+    private var isFavorite: Bool {
+        favoriteOverride ?? recipe.favorite
+    }
 
     var body: some View {
         ScrollView {
@@ -116,6 +127,27 @@ struct RecipeDetailView: View {
                         Image(systemName: "ellipsis.circle")
                     }
                     .disabled(isSubmittingModerationAction)
+                }
+            }
+
+            if let onToggleFavorite {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button {
+                        guard !isTogglingFavorite else { return }
+                        isTogglingFavorite = true
+                        let previous = isFavorite
+                        favoriteOverride = !previous
+                        Task {
+                            let result = await onToggleFavorite()
+                            favoriteOverride = result ?? previous
+                            isTogglingFavorite = false
+                        }
+                    } label: {
+                        Image(systemName: isFavorite ? "star.fill" : "star")
+                            .font(.title3)
+                            .foregroundStyle(isFavorite ? .yellow : .white.opacity(0.7))
+                    }
+                    .accessibilityLabel(isFavorite ? "Odebrat z oblíbených" : "Přidat do oblíbených")
                 }
             }
 

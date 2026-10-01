@@ -48,6 +48,20 @@ final class FavoriteRecipesViewModel: ObservableObject {
         await loadRecipes()
     }
 
+    /// Přepnutí z detailu receptu. Recept může být v seznamu, nebo už z něj byl
+    /// odebrán (a uživatel ho chce vrátit), proto se po změně seznam načte znovu.
+    func toggleFavoriteFromDetail(for recipe: Recipe) async -> Bool? {
+        let wasFavorite = recipes.contains { $0.id == recipe.id }
+
+        do {
+            try await APIService.shared.toggleFavorite(recipeId: recipe.id)
+            await loadRecipes()
+            return !wasFavorite
+        } catch {
+            return nil
+        }
+    }
+
     func toggleFavorite(for recipe: Recipe) async {
         guard let index = recipes.firstIndex(where: { $0.id == recipe.id }) else {
             return
