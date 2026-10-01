@@ -29,32 +29,41 @@ struct AuthView: View {
             }
             
             VStack(spacing: 18) {
-                TextField("Uživatelské jméno", text: $viewModel.username)
-                    .textFieldStyle(.plain)
-                    .textInputAutocapitalization(.never)
-                    .autocorrectionDisabled(true)
-                    .padding()
-                    .background(AppTheme.card)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .foregroundStyle(AppTheme.text)
-                
-                if isRegisterMode {
-                    TextField("Email", text: $viewModel.email)
+                VStack(alignment: .leading, spacing: 6) {
+                    fieldLabel("Uživatelské jméno")
+                    TextField("", text: $viewModel.username, prompt: placeholder("Zadejte uživatelské jméno"))
                         .textFieldStyle(.plain)
-                        .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
+                        .autocorrectionDisabled(true)
                         .padding()
                         .background(AppTheme.card)
                         .clipShape(RoundedRectangle(cornerRadius: 10))
                         .foregroundStyle(AppTheme.text)
                 }
                 
-                SecureField("Heslo", text: $viewModel.password)
-                    .textFieldStyle(.plain)
-                    .padding()
-                    .background(AppTheme.card)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-                    .foregroundStyle(AppTheme.text)
+                if isRegisterMode {
+                    VStack(alignment: .leading, spacing: 6) {
+                        fieldLabel("E-mail")
+                        TextField("", text: $viewModel.email, prompt: placeholder("Zadejte e-mail"))
+                            .textFieldStyle(.plain)
+                            .keyboardType(.emailAddress)
+                            .textInputAutocapitalization(.never)
+                            .padding()
+                            .background(AppTheme.card)
+                            .clipShape(RoundedRectangle(cornerRadius: 10))
+                            .foregroundStyle(AppTheme.text)
+                    }
+                }
+                
+                VStack(alignment: .leading, spacing: 6) {
+                    fieldLabel("Heslo")
+                    SecureField("", text: $viewModel.password, prompt: placeholder("Zadejte heslo"))
+                        .textFieldStyle(.plain)
+                        .padding()
+                        .background(AppTheme.card)
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .foregroundStyle(AppTheme.text)
+                }
                 
                 Button {
                     Task {
@@ -106,7 +115,7 @@ struct AuthView: View {
 
             if showForgotPassword {
                 VStack(spacing: 12) {
-                    TextField("E-mail pro reset hesla", text: $viewModel.email)
+                    TextField("", text: $viewModel.email, prompt: placeholder("E-mail pro reset hesla"))
                         .textFieldStyle(.plain)
                         .keyboardType(.emailAddress)
                         .textInputAutocapitalization(.never)
@@ -141,6 +150,17 @@ struct AuthView: View {
         .padding()
         .background(AppTheme.background)
         .dismissKeyboardOnTap()
+    }
+
+    private func placeholder(_ text: String) -> Text {
+        Text(text).foregroundStyle(Color.white.opacity(0.45))
+    }
+
+    private func fieldLabel(_ text: String) -> some View {
+        Text(text)
+            .font(.subheadline.bold())
+            .foregroundStyle(AppTheme.mutedText)
+            .padding(.leading, 4)
     }
 
     private func authTabButton(title: String, isActive: Bool, action: @escaping () -> Void) -> some View {

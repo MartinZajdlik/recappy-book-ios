@@ -5,6 +5,19 @@ final class AuthService {
     static let shared = AuthService()
     
     private init() {}
+
+    /// Převede chybovou odpověď serveru na čitelný text pro uživatele.
+    /// Validační chyby přicházejí jako JSON (např. {"email":"E-mail nemá správný formát."}),
+    /// z nich se vezmou jen samotné hlášky. Prostý text se vrátí tak, jak je.
+    private func readableError(from data: Data, fallback: String) -> String {
+        if let dict = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
+            let messages = dict.values.compactMap { $0 as? String }
+            return messages.isEmpty ? fallback : messages.joined(separator: "\n")
+        }
+        let text = String(data: data, encoding: .utf8)?
+            .trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        return text.isEmpty ? fallback : text
+    }
     
     private let baseURL = "https://recappy-book.onrender.com"
     
@@ -35,7 +48,7 @@ final class AuthService {
         
         guard httpResponse.statusCode == 200 else {
             
-            let errorMessage = String(data: data, encoding: .utf8) ?? "Neznámá chyba"
+            let errorMessage = readableError(from: data, fallback: "Přihlášení se nezdařilo. Zkuste to prosím znovu.")
             
             throw NSError(
                 domain: "",
@@ -84,7 +97,7 @@ final class AuthService {
                 domain: "",
                 code: httpResponse.statusCode,
                 userInfo: [
-                    NSLocalizedDescriptionKey: message
+                    NSLocalizedDescriptionKey: readableError(from: data, fallback: "Registrace se nezdařila. Zkontrolujte prosím zadané údaje.")
                 ]
             )
         }

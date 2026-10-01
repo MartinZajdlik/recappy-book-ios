@@ -69,6 +69,24 @@ final class AuthViewModel: ObservableObject {
         errorMessage = ""
         successMessage = ""
         
+        let trimmedUsername = username.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !trimmedUsername.isEmpty else {
+            errorMessage = "Zadejte uživatelské jméno."
+            return
+        }
+        
+        guard trimmedEmail.range(of: #"^[\w.-]+@[\w-]+(\.[\w-]+)*\.[A-Za-z]{2,}$"#, options: .regularExpression) != nil else {
+            errorMessage = "E-mail nemá správný formát."
+            return
+        }
+        
+        guard password.count >= 4 else {
+            errorMessage = "Heslo musí mít alespoň 4 znaky."
+            return
+        }
+        
         isLoading = true
         
         defer {
@@ -79,7 +97,7 @@ final class AuthViewModel: ObservableObject {
             
             let message = try await AuthService.shared.register(
                 username: username,
-                email: email,
+                email: trimmedEmail,
                 password: password
             )
             
