@@ -10,10 +10,36 @@ import UIKit
 /// Tenhle modifier najde skutečný `UINavigationController` dané hierarchie
 /// a zavolá na něm `setNavigationBarHidden(true, animated: false)` přímo,
 /// čímž lištu opravdu odstraní i s její hit-test oblastí.
+/// Pomocný controller, který lištu skryje pokaždé, když se zapojí do navigace
+/// nebo se obrazovka zobrazí – ne jen jednou se zpožděním. Na iPadu totiž při
+/// prvním vykreslení ještě nemusí být `navigationController` k dispozici.
+private final class HiderViewController: UIViewController {
+
+    override func didMove(toParent parent: UIViewController?) {
+        super.didMove(toParent: parent)
+        hideBar()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        hideBar()
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        hideBar()
+    }
+
+    func hideBar() {
+        guard let navigationController, !navigationController.isNavigationBarHidden else { return }
+        navigationController.setNavigationBarHidden(true, animated: false)
+    }
+}
+
 private struct NavigationBarTrueHider: UIViewControllerRepresentable {
 
     func makeUIViewController(context: Context) -> UIViewController {
-        let vc = UIViewController()
+        let vc = HiderViewController()
         vc.view.backgroundColor = .clear
         vc.view.isUserInteractionEnabled = false
         return vc
