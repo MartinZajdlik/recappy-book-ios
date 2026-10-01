@@ -50,6 +50,9 @@ struct MyRecipesView: View {
             .padding()
         }
         .background(AppTheme.background)
+        .autoRefresh {
+            await viewModel.loadRecipes()
+        }
         .task {
             await viewModel.loadRecipesIfNeeded()
         }

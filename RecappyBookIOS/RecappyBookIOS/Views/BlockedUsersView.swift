@@ -59,6 +59,9 @@ struct BlockedUsersView: View {
             .padding(.top)
         }
         .background(AppTheme.background)
+        .autoRefresh {
+            await viewModel.loadBlockedUsers()
+        }
         .task {
             await viewModel.loadBlockedUsers()
         }

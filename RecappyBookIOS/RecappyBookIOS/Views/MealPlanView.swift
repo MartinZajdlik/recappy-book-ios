@@ -66,6 +66,9 @@ struct MealPlanView: View {
             .padding(.top)
         }
         .background(AppTheme.background)
+        .autoRefresh {
+            await viewModel.loadMealPlan()
+        }
         .task {
             await viewModel.loadMealPlanIfNeeded()
         }

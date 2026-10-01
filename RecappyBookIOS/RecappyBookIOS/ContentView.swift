@@ -79,7 +79,10 @@ struct ContentView: View {
                                             .padding(.horizontal, 14)
                                         
                                         NavigationLink {
-                                            RecipeDetailView(recipe: recipe)
+                                            RecipeDetailView(recipe: recipe, onToggleFavorite: {
+                                                if authViewModel.guardGuest() { return nil }
+                                                return await viewModel.toggleFavorite(for: recipe)
+                                            })
                                         } label: {
                                             DailyTipCardView(recipe: recipe)
                                         }
@@ -91,7 +94,10 @@ struct ContentView: View {
                                     LazyVStack(spacing: 16) {
                                         ForEach(viewModel.filteredRecipes) { recipe in
                                             NavigationLink {
-                                                RecipeDetailView(recipe: recipe)
+                                                RecipeDetailView(recipe: recipe, onToggleFavorite: {
+                                                if authViewModel.guardGuest() { return nil }
+                                                return await viewModel.toggleFavorite(for: recipe)
+                                            })
                                             } label: {
                                                 RecipeCardView(
                                                     recipe: recipe,
@@ -110,7 +116,10 @@ struct ContentView: View {
                                 LazyVStack(spacing: 16) {
                                     ForEach(viewModel.filteredRecipes) { recipe in
                                         NavigationLink {
-                                            RecipeDetailView(recipe: recipe)
+                                            RecipeDetailView(recipe: recipe, onToggleFavorite: {
+                                                if authViewModel.guardGuest() { return nil }
+                                                return await viewModel.toggleFavorite(for: recipe)
+                                            })
                                         } label: {
                                             RecipeCardView(
                                                 recipe: recipe,
@@ -137,6 +146,9 @@ struct ContentView: View {
                 .padding(.top, 0)
             }
             .background(AppTheme.background)
+            .autoRefresh {
+                await viewModel.refresh()
+            }
             .trulyHideNavigationBar()
             .safeAreaInset(edge: .bottom) {
                 if verticalSizeClass != .compact {

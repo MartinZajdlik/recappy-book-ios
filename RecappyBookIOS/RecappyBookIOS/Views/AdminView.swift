@@ -13,6 +13,7 @@ struct AdminView: View {
     @State private var pendingCount = 0
     @State private var reportedCount = 0
     @State private var recipesRefreshToken = UUID()
+    @State private var reloadTrigger = 0
     
     enum AdminTab {
         case recipes
@@ -65,6 +66,9 @@ struct AdminView: View {
                 .padding(.top, 0)
             }
             .background(AppTheme.background)
+            .autoRefresh {
+                await refreshAdmin()
+            }
             .trulyHideNavigationBar()
             .safeAreaInset(edge: .bottom) {
                 if verticalSizeClass != .compact {
@@ -142,12 +146,12 @@ struct AdminView: View {
     }
 
     private var adminRecipesSection: some View {
-        AdminRecipesView()
+        AdminRecipesView(reloadTrigger: reloadTrigger)
             .id(recipesRefreshToken)
     }
 
     private var adminPendingRecipesSection: some View {
-        AdminPendingRecipesView {
+        AdminPendingRecipesView(reloadTrigger: reloadTrigger) {
             Task {
                 await loadPendingCount()
             }
@@ -155,11 +159,18 @@ struct AdminView: View {
     }
 
     private var adminReportedRecipesSection: some View {
-        AdminReportedRecipesView {
+        AdminReportedRecipesView(reloadTrigger: reloadTrigger) {
             Task {
                 await loadReportedCount()
             }
         }
+    }
+
+    /// Obnoví otevřenou záložku (přes `reloadTrigger`) i počty na štítcích.
+    private func refreshAdmin() async {
+        reloadTrigger += 1
+        await loadPendingCount()
+        await loadReportedCount()
     }
 
     private func loadPendingCount() async {
@@ -171,7 +182,7 @@ struct AdminView: View {
     }
 
     private var adminUsersSection: some View {
-        AdminUsersView()
+        AdminUsersView(reloadTrigger: reloadTrigger)
     }
     
     private func badgeCount(for tab: AdminTab) -> Int? {

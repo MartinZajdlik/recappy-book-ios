@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AdminUsersView: View {
+    /// Zvýšením z rodiče (AdminView) se obsah znovu načte.
+    var reloadTrigger: Int = 0
     
     @StateObject private var viewModel = AdminUsersViewModel()
     @State private var userToDelete: AdminUser?
@@ -51,6 +53,11 @@ struct AdminUsersView: View {
         }
         .task {
             await viewModel.loadUsers()
+        }
+        .onChange(of: reloadTrigger) { _, _ in
+            Task {
+                await viewModel.loadUsers()
+            }
         }
         .alert("Smazat uživatele?", isPresented: $showDeleteAlert) {
             Button("Zrušit", role: .cancel) {}

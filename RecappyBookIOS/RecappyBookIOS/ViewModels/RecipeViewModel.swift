@@ -68,6 +68,27 @@ final class RecipeViewModel: ObservableObject {
         
         isLoading = false
     }
+    /// Tiché obnovení (stažení dolů / návrat do aplikace): bez načítací obrazovky
+    /// a se zachováním dnešního tipu, pokud recept pořád existuje.
+    func refresh() async {
+        do {
+            let fresh = try await APIService.shared.fetchRecipes()
+            recipes = fresh
+            if let tipId = dailyTip?.id, let updatedTip = fresh.first(where: { $0.id == tipId }) {
+                dailyTip = updatedTip
+            } else {
+                dailyTip = fresh.randomElement()
+            }
+            errorMessage = nil
+        } catch {
+            // Při chybě necháme zobrazená stávající data.
+            if recipes.isEmpty {
+                errorMessage = "Nepodařilo se načíst recepty."
+            }
+            print("Chyba při obnovení receptů:", error)
+        }
+    }
+
     func loadRecipesIfNeeded() async {
         if isLoading || !recipes.isEmpty {
             return
@@ -75,23 +96,30 @@ final class RecipeViewModel: ObservableObject {
 
         await loadRecipes()
     }
-    func toggleFavorite(for recipe: Recipe) async {
+    /// Vrací nový stav oblíbenosti, nebo `nil`, když se změna nepovedla.
+    @discardableResult
+    func toggleFavorite(for recipe: Recipe) async -> Bool? {
         guard let index = recipes.firstIndex(where: { $0.id == recipe.id }) else {
-            return
+            return nil
         }
 
         recipes[index].favorite.toggle()
+        let newValue = recipes[index].favorite
 
         do {
             try await APIService.shared.toggleFavorite(recipeId: recipe.id)
 
             if dailyTip?.id == recipe.id {
-                dailyTip?.favorite = recipes[index].favorite
+                dailyTip?.favorite = newValue
             }
+            return newValue
         } catch {
-            recipes[index].favorite.toggle()
+            if let i = recipes.firstIndex(where: { $0.id == recipe.id }) {
+                recipes[i].favorite = !newValue
+            }
             errorMessage = "Nepodařilo se upravit oblíbený recept."
             print("Chyba při změně oblíbeného receptu:", error)
+            return nil
         }
     }
 }

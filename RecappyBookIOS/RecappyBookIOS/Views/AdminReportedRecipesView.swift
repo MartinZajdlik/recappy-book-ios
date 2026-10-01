@@ -7,6 +7,8 @@ struct AdminReportedRecipesView: View {
     @State private var showDeleteAlert = false
     @State private var reportToShow: ReportedRecipe?
     @State private var reportToEdit: ReportedRecipe?
+    /// Zvýšením z rodiče (AdminView) se obsah znovu načte.
+    var reloadTrigger: Int = 0
     var onStatusChange: () -> Void = {}
 
     var body: some View {
@@ -64,6 +66,11 @@ struct AdminReportedRecipesView: View {
         }
         .task {
             await viewModel.loadReportsIfNeeded()
+        }
+        .onChange(of: reloadTrigger) { _, _ in
+            Task {
+                await viewModel.loadReports()
+            }
         }
         .alert("Smazat recept?", isPresented: $showDeleteAlert) {
             Button("Zrušit", role: .cancel) {}

@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct AdminRecipesView: View {
+    /// Zvýšením z rodiče (AdminView) se obsah znovu načte.
+    var reloadTrigger: Int = 0
     
     @StateObject private var viewModel = AdminRecipesViewModel()
     @State private var recipeToDelete: Recipe?
@@ -75,6 +77,11 @@ struct AdminRecipesView: View {
         }
         .task {
             await viewModel.loadRecipesIfNeeded()
+        }
+        .onChange(of: reloadTrigger) { _, _ in
+            Task {
+                await viewModel.loadRecipes()
+            }
         }
         .alert("Smazat recept?", isPresented: $showDeleteAlert) {
             Button("Zrušit", role: .cancel) {}
