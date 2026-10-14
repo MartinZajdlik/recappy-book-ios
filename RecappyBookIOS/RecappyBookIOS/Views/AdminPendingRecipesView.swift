@@ -7,6 +7,7 @@ struct AdminPendingRecipesView: View {
     @State private var showDeleteAlert = false
     @State private var recipeToShow: Recipe?
     @State private var recipeToEdit: Recipe?
+    @State private var recipeToReject: Recipe?
     /// Zvýšením z rodiče (AdminView) se obsah znovu načte.
     var reloadTrigger: Int = 0
     var onStatusChange: () -> Void = {}
@@ -59,10 +60,7 @@ struct AdminPendingRecipesView: View {
                             }
                         },
                         onReject: {
-                            Task {
-                                await viewModel.reject(recipe)
-                                onStatusChange()
-                            }
+                            recipeToReject = recipe
                         }
                     )
                 }
@@ -93,6 +91,12 @@ struct AdminPendingRecipesView: View {
         }
         .navigationDestination(item: $recipeToShow) { recipe in
             RecipeDetailView(recipe: recipe)
+        }
+        .sheet(item: $recipeToReject) { recipe in
+            RejectRecipeSheet(recipe: recipe) { reason in
+                await viewModel.reject(recipe, reason: reason)
+                onStatusChange()
+            }
         }
         .sheet(item: $recipeToEdit) { recipe in
             NavigationStack {

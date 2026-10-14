@@ -49,9 +49,9 @@ final class AdminPendingRecipesViewModel: ObservableObject {
         }
     }
 
-    func reject(_ recipe: Recipe) async {
+    func reject(_ recipe: Recipe, reason: String) async {
         do {
-            try await APIService.shared.rejectRecipe(recipeId: recipe.id)
+            try await APIService.shared.rejectRecipe(recipeId: recipe.id, reason: reason)
             await loadRecipes()
         } catch {
             errorMessage = error.userFacingMessage

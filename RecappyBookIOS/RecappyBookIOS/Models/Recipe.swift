@@ -11,6 +11,8 @@ struct Recipe: Identifiable, Codable, Hashable {
     let authorUsername: String?
     var favorite: Bool
     let status: RecipeStatus
+    /// Důvod zamítnutí od admina – backend ho posílá jen u zamítnutých receptů.
+    let rejectionReason: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -23,6 +25,7 @@ struct Recipe: Identifiable, Codable, Hashable {
         case authorUsername
         case favorite
         case status
+        case rejectionReason
     }
 
     init(
@@ -35,7 +38,8 @@ struct Recipe: Identifiable, Codable, Hashable {
         imageUrl: String?,
         authorUsername: String?,
         favorite: Bool = false,
-        status: RecipeStatus = .approved
+        status: RecipeStatus = .approved,
+        rejectionReason: String? = nil
     ) {
         self.id = id
         self.authorId = authorId
@@ -47,6 +51,7 @@ struct Recipe: Identifiable, Codable, Hashable {
         self.authorUsername = authorUsername
         self.favorite = favorite
         self.status = status
+        self.rejectionReason = rejectionReason
     }
 
     init(from decoder: Decoder) throws {
@@ -62,5 +67,6 @@ struct Recipe: Identifiable, Codable, Hashable {
         authorUsername = try container.decodeIfPresent(String.self, forKey: .authorUsername)
         favorite = try container.decodeIfPresent(Bool.self, forKey: .favorite) ?? false
         status = try container.decodeIfPresent(RecipeStatus.self, forKey: .status) ?? .approved
+        rejectionReason = try container.decodeIfPresent(String.self, forKey: .rejectionReason)
     }
 }

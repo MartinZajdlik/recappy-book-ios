@@ -33,6 +33,13 @@ struct RecipeCardView: View {
                     RecipeStatusBadge(status: recipe.status)
                 }
 
+                if recipe.status == .rejected, let reason = recipe.rejectionReason {
+                    Text("Důvod: \(reason)")
+                        .font(.caption)
+                        .foregroundStyle(.red)
+                        .lineLimit(2)
+                }
+
                 if let author = recipe.authorUsername {
                     Text("Autor: \(author)")
                         .font(.caption)

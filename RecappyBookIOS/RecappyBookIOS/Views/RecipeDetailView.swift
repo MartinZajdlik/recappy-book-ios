@@ -39,6 +39,10 @@ struct RecipeDetailView: View {
                 Text(recipe.title)
                     .font(.system(size: 28, weight: .bold))
                     .foregroundStyle(AppTheme.green)
+
+                if recipe.status == .rejected {
+                    RejectionNoticeView(reason: recipe.rejectionReason)
+                }
                 
                 Text("Kategorie: \(recipe.category ?? "-")")
                     .font(.headline)

@@ -227,8 +227,21 @@ final class APIService {
         try await performAction("/admin/recepty/\(recipeId)/approve", method: "PATCH")
     }
 
-    func rejectRecipe(recipeId: Int64) async throws {
-        try await performAction("/admin/recepty/\(recipeId)/reject", method: "PATCH")
+    func rejectRecipe(recipeId: Int64, reason: String) async throws {
+        var request = try APIClient.shared.makeRequest(
+            path: "/admin/recepty/\(recipeId)/reject",
+            method: "PATCH",
+            requiresAuth: true
+        )
+
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(["reason": reason])
+
+        let (data, response) = try await APIClient.shared.send(request)
+
+        guard response.statusCode == 200 else {
+            throw APIService.serverError(status: response.statusCode, data: data)
+        }
     }
 
     // MARK: - NAHLÁŠENÍ A BLOKOVÁNÍ
