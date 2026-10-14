@@ -41,7 +41,10 @@ struct RecipeDetailView: View {
                     .foregroundStyle(AppTheme.green)
 
                 if recipe.status == .rejected {
-                    RejectionNoticeView(reason: recipe.rejectionReason)
+                    RejectionNoticeView(
+                        reason: recipe.rejectionReason,
+                        scheduledDeletionDate: recipe.scheduledDeletionDate
+                    )
                 }
                 
                 Text("Kategorie: \(recipe.category ?? "-")")

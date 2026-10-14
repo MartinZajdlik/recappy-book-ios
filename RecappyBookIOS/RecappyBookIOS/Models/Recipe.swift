@@ -13,6 +13,8 @@ struct Recipe: Identifiable, Codable, Hashable {
     let status: RecipeStatus
     /// Důvod zamítnutí od admina – backend ho posílá jen u zamítnutých receptů.
     let rejectionReason: String?
+    /// Den (yyyy-MM-dd), kdy backend zamítnutý recept smaže, pokud ho autor neupraví.
+    let scheduledDeletionDate: String?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -26,6 +28,7 @@ struct Recipe: Identifiable, Codable, Hashable {
         case favorite
         case status
         case rejectionReason
+        case scheduledDeletionDate
     }
 
     init(
@@ -39,7 +42,8 @@ struct Recipe: Identifiable, Codable, Hashable {
         authorUsername: String?,
         favorite: Bool = false,
         status: RecipeStatus = .approved,
-        rejectionReason: String? = nil
+        rejectionReason: String? = nil,
+        scheduledDeletionDate: String? = nil
     ) {
         self.id = id
         self.authorId = authorId
@@ -52,6 +56,7 @@ struct Recipe: Identifiable, Codable, Hashable {
         self.favorite = favorite
         self.status = status
         self.rejectionReason = rejectionReason
+        self.scheduledDeletionDate = scheduledDeletionDate
     }
 
     init(from decoder: Decoder) throws {
@@ -68,5 +73,6 @@ struct Recipe: Identifiable, Codable, Hashable {
         favorite = try container.decodeIfPresent(Bool.self, forKey: .favorite) ?? false
         status = try container.decodeIfPresent(RecipeStatus.self, forKey: .status) ?? .approved
         rejectionReason = try container.decodeIfPresent(String.self, forKey: .rejectionReason)
+        scheduledDeletionDate = try container.decodeIfPresent(String.self, forKey: .scheduledDeletionDate)
     }
 }

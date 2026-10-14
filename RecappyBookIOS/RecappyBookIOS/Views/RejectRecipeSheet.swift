@@ -143,6 +143,22 @@ struct RejectRecipeSheet: View {
 struct RejectionNoticeView: View {
 
     let reason: String?
+    /// "yyyy-MM-dd" z backendu; nil u starších dat nebo když backend datum neposlal.
+    var scheduledDeletionDate: String? = nil
+
+    private var formattedDeletionDate: String? {
+        guard let scheduledDeletionDate else { return nil }
+        let parser = DateFormatter()
+        parser.calendar = Calendar(identifier: .gregorian)
+        parser.locale = Locale(identifier: "en_US_POSIX")
+        parser.dateFormat = "yyyy-MM-dd"
+        guard let date = parser.date(from: scheduledDeletionDate) else { return nil }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "cs_CZ")
+        formatter.dateFormat = "d. M. yyyy"
+        return formatter.string(from: date)
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -161,6 +177,12 @@ struct RejectionNoticeView: View {
             Text("Uprav recept a ulož ho – znovu se odešle ke schválení.")
                 .font(.footnote)
                 .foregroundStyle(AppTheme.mutedText)
+
+            if let formattedDeletionDate {
+                Text("Pokud recept neupravíš, bude \(formattedDeletionDate) automaticky smazán.")
+                    .font(.footnote.bold())
+                    .foregroundStyle(.red)
+            }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
