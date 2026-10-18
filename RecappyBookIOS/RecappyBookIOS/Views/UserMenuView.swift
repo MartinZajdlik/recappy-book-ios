@@ -18,6 +18,9 @@ struct UserMenuView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     @StateObject private var viewModel = UserMenuViewModel()
+    /// Nastavení účtu se ukazuje přímo v menu (bez NavigationStack v sheetu –
+    /// ten po zavření menu a odhlášení blokoval klávesnici na další obrazovce).
+    @State private var showAccountSettings = false
 
     private let privacyPolicyURL = URL(string: "https://martinzajdlik.github.io/recappy-book-legal/")!
     private let termsOfUseURL = URL(string: "https://martinzajdlik.github.io/recappy-book-legal/terms.html")!
@@ -34,14 +37,23 @@ struct UserMenuView: View {
     private var showsAccountSettings: Bool { !isGuest && !isAdmin }
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
+        ScrollView {
+            if showAccountSettings {
+                AccountSettingsView(
+                    username: username,
+                    onBack: { showAccountSettings = false },
+                    onDeleteProfile: {
+                        dismiss()
+                        onDeleteProfile()
+                    }
+                )
+                .frame(maxWidth: contentMaxWidth)
+                .frame(maxWidth: .infinity)
+            } else {
                 menuContent
             }
-            .background(AppTheme.background)
-            .toolbar(.hidden, for: .navigationBar)
         }
-        .tint(AppTheme.green)
+        .background(AppTheme.background)
         .task {
             guard !isGuest else { return }
             viewModel.load(includeFavorites: !isAdmin)
@@ -108,23 +120,14 @@ struct UserMenuView: View {
                 }
 
                 if showsAccountSettings {
-                    NavigationLink {
-                        AccountSettingsView(username: username) {
-                            dismiss()
-                            onDeleteProfile()
-                        }
-                    } label: {
-                        rowLabel(
-                            title: "Nastavení účtu",
-                            subtitle: nil,
-                            icon: "gearshape.fill",
-                            tint: AppTheme.mutedText,
-                            trailing: nil,
-                            showsChevron: true,
-                            showsDivider: true
-                        )
+                    menuRow(
+                        title: "Nastavení účtu",
+                        icon: "gearshape.fill",
+                        tint: AppTheme.mutedText,
+                        showsDivider: true
+                    ) {
+                        showAccountSettings = true
                     }
-                    .buttonStyle(.plain)
                 }
 
                 if isGuest {

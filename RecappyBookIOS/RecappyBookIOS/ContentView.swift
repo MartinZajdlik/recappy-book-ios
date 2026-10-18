@@ -114,7 +114,6 @@ struct ContentView: View {
                 }
                 .padding(.top, 0)
             }
-            .scrollDismissesKeyboard(.immediately)
             .background(AppTheme.background)
             .autoRefresh {
                 await viewModel.refresh()
