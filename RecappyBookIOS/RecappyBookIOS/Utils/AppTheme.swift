@@ -10,10 +10,8 @@ enum AppTheme {
     static let mutedText = Color.gray
     static let accent = green
 
-    // Barvy ikonek v uživatelském menu (malé barevné čtverečky jako v Nastavení iOS).
+    // Barvy stavových štítků v uživatelském menu.
     static let iconOrange = Color(red: 255/255, green: 149/255, blue: 0/255)
-    static let iconYellow = Color(red: 255/255, green: 204/255, blue: 0/255)
-    static let iconGray = Color(red: 99/255, green: 99/255, blue: 102/255)
     static let iconRed = Color(red: 255/255, green: 69/255, blue: 58/255)
     static let separator = Color.white.opacity(0.08)
 }

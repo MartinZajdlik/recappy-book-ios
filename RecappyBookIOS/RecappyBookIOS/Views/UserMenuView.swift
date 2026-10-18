@@ -61,7 +61,7 @@ struct UserMenuView: View {
                 menuRow(
                     title: "Moje recepty",
                     icon: "book.fill",
-                    tint: AppTheme.iconOrange,
+                    tint: AppTheme.green,
                     trailing: AnyView(myRecipesBadges),
                     showsDivider: true
                 ) {
@@ -73,7 +73,7 @@ struct UserMenuView: View {
                     menuRow(
                         title: "Oblíbené recepty",
                         icon: "star.fill",
-                        tint: AppTheme.iconYellow,
+                        tint: AppTheme.green,
                         trailing: viewModel.favoritesCount.map { AnyView(countText($0)) },
                         showsDivider: true
                     ) {
@@ -86,7 +86,7 @@ struct UserMenuView: View {
                     title: "Jídelníček",
                     subtitle: viewModel.todayMeal.map { "Dnes: \($0)" },
                     icon: "calendar",
-                    tint: AppTheme.blue,
+                    tint: AppTheme.green,
                     showsDivider: false
                 ) {
                     dismiss()
@@ -99,7 +99,7 @@ struct UserMenuView: View {
                     menuRow(
                         title: "Zablokovaní uživatelé",
                         icon: "person.crop.circle.badge.xmark",
-                        tint: AppTheme.iconGray,
+                        tint: AppTheme.mutedText,
                         showsDivider: true
                     ) {
                         dismiss()
@@ -118,7 +118,7 @@ struct UserMenuView: View {
                             title: "Nastavení účtu",
                             subtitle: nil,
                             icon: "gearshape.fill",
-                            tint: AppTheme.iconGray,
+                            tint: AppTheme.mutedText,
                             trailing: nil,
                             showsChevron: true,
                             showsDivider: true
@@ -142,7 +142,7 @@ struct UserMenuView: View {
                     menuRow(
                         title: "Odhlásit",
                         icon: "rectangle.portrait.and.arrow.right",
-                        tint: AppTheme.iconGray,
+                        tint: AppTheme.mutedText,
                         showsChevron: false,
                         showsDivider: false
                     ) {
@@ -300,9 +300,9 @@ struct UserMenuView: View {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.system(size: iconTileSize * 0.5, weight: .semibold))
-                    .foregroundStyle(.white)
+                    .foregroundStyle(tint)
                     .frame(width: iconTileSize, height: iconTileSize)
-                    .background(tint)
+                    .background(tint.opacity(0.15))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
 
                 VStack(alignment: .leading, spacing: 2) {
