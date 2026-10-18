@@ -4,6 +4,8 @@ struct CategoryButtonView: View {
     
     let title: String
     let icon: String
+    /// Vybraná kategorie dostane tenký zelený rámeček (stejný jako aktivní vyhledávání).
+    var isSelected: Bool = false
     let action: () -> Void
 
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
@@ -29,6 +31,10 @@ struct CategoryButtonView: View {
             .frame(width: cardWidth, height: cardHeight)
             .background(AppTheme.categoryCard)
             .clipShape(RoundedRectangle(cornerRadius: 10))
+            .overlay(
+                RoundedRectangle(cornerRadius: 10)
+                    .stroke(isSelected ? AppTheme.green.opacity(0.6) : Color.clear, lineWidth: 1)
+            )
             .contentShape(Rectangle())
         }
     }

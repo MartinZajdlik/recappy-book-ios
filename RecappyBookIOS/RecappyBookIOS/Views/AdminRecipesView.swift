@@ -21,23 +21,23 @@ struct AdminRecipesView: View {
             
             HStack(spacing: 8) {
                 
-                CategoryButtonView(title: "Polévky", icon: "cup.and.saucer.fill") {
+                CategoryButtonView(title: "Polévky", icon: "cup.and.saucer.fill", isSelected: viewModel.selectedCategory == "Polévky") {
                     viewModel.selectCategory("Polévky")
                 }
                 
-                CategoryButtonView(title: "Hlavní\njídla", icon: "fork.knife.circle") {
+                CategoryButtonView(title: "Hlavní\njídla", icon: "fork.knife.circle", isSelected: viewModel.selectedCategory == "Hlavní jídla") {
                     viewModel.selectCategory("Hlavní jídla")
                 }
                 
-                CategoryButtonView(title: "Dezerty", icon: "birthday.cake") {
+                CategoryButtonView(title: "Dezerty", icon: "birthday.cake", isSelected: viewModel.selectedCategory == "Dezerty") {
                     viewModel.selectCategory("Dezerty")
                 }
                 
-                CategoryButtonView(title: "Snídaně", icon: "frying.pan.fill") {
+                CategoryButtonView(title: "Snídaně", icon: "frying.pan.fill", isSelected: viewModel.selectedCategory == "Snídaně") {
                     viewModel.selectCategory("Snídaně")
                 }
                 
-                CategoryButtonView(title: "Ostatní", icon: "takeoutbag.and.cup.and.straw") {
+                CategoryButtonView(title: "Ostatní", icon: "takeoutbag.and.cup.and.straw", isSelected: viewModel.selectedCategory == "Ostatní") {
                     viewModel.selectCategory("Ostatní")
                 }
             }
