@@ -6,6 +6,10 @@ struct ContentView: View {
     @StateObject private var viewModel = RecipeViewModel()
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var showUserMenu = false
+    /// Akce z uživatelského menu, které mění celou obrazovku (odhlášení, …), se smí
+    /// spustit až po úplném zavření sheetu. Jinak zůstane rozpracovaná prezentace a
+    /// textová pole na další obrazovce nepřijmou klávesnici.
+    @State private var pendingMenuAction: (() -> Void)?
     @State private var showAddRecipe = false
     @State private var showMyRecipes = false
     @State private var showDeleteProfileAlert = false
@@ -138,7 +142,7 @@ struct ContentView: View {
         .task {
             await viewModel.loadRecipesIfNeeded()
         }
-        .sheet(isPresented: $showUserMenu) {
+        .sheet(isPresented: $showUserMenu, onDismiss: runPendingMenuAction) {
             UserMenuView(
                 username: authViewModel.isGuest ? "Host" : (UserDefaults.standard.string(forKey: "currentUsername") ?? ""),
                 isAdmin: authViewModel.role == "ROLE_ADMIN",
@@ -164,13 +168,13 @@ struct ContentView: View {
                     showBlockedUsers = true
                 },
                 onDeleteProfile: {
-                    showDeleteProfileAlert = true
+                    pendingMenuAction = { showDeleteProfileAlert = true }
                 },
                 onLogout: {
-                    authViewModel.logout()
+                    pendingMenuAction = { authViewModel.logout() }
                 },
                 onExitGuest: {
-                    authViewModel.exitGuestMode()
+                    pendingMenuAction = { authViewModel.exitGuestMode() }
                 }
             )
         }
@@ -237,6 +241,12 @@ struct ContentView: View {
             Text("Jako host nemůžeš používat některé funkce. Zaregistruj se nebo se přihlas.")
         }
 
+    }
+
+    private func runPendingMenuAction() {
+        let action = pendingMenuAction
+        pendingMenuAction = nil
+        action?()
     }
 
     // MARK: - Seznam receptů a výsledky hledání

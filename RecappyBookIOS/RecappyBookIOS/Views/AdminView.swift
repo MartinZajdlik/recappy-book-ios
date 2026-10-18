@@ -6,6 +6,8 @@ struct AdminView: View {
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var selectedTab: AdminTab = .recipes
     @State private var showUserMenu = false
+    /// Odhlášení se spustí až po úplném zavření uživatelského menu – viz ContentView.
+    @State private var pendingMenuAction: (() -> Void)?
     @State private var showMealPlan = false
     @State private var showAddRecipe = false
     @State private var showMyRecipes = false
@@ -96,7 +98,7 @@ struct AdminView: View {
                 await loadReportedCount()
             }
         }
-        .sheet(isPresented: $showUserMenu) {
+        .sheet(isPresented: $showUserMenu, onDismiss: runPendingMenuAction) {
             UserMenuView(
                 username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",
                 isAdmin: authViewModel.role == "ROLE_ADMIN",
@@ -119,7 +121,7 @@ struct AdminView: View {
                     print("Smazání profilu později")
                 },
                 onLogout: {
-                    authViewModel.logout()
+                    pendingMenuAction = { authViewModel.logout() }
                 },
                 onExitGuest: {}
             )
@@ -167,6 +169,12 @@ struct AdminView: View {
     }
 
     /// Obnoví otevřenou záložku (přes `reloadTrigger`) i počty na štítcích.
+    private func runPendingMenuAction() {
+        let action = pendingMenuAction
+        pendingMenuAction = nil
+        action?()
+    }
+
     private func refreshAdmin() async {
         reloadTrigger += 1
         await loadPendingCount()
