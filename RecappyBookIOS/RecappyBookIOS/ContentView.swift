@@ -26,12 +26,16 @@ struct ContentView: View {
                         showUserControls: true,
                         onLogoTap: {
                             viewModel.clearCategory()
+                            viewModel.clearSearch()
                         },
                         onUserMenuTap: {
                             showUserMenu = true
                         }
                     )
                     
+                    SearchBarView(text: $viewModel.searchText)
+                        .padding(.horizontal, 14)
+
                     HStack(spacing: 8) {
                         
                         CategoryButtonView(title: "Polévky", icon: "cup.and.saucer.fill") {
@@ -69,70 +73,31 @@ struct ContentView: View {
                             
                         } else {
                             
-                            if viewModel.selectedCategory == nil {
-                                if let recipe = viewModel.dailyTip {
-                                    VStack(spacing: 16) {
-                                        Text("TIP na dnešní den")
-                                            .font(.system(size: 20, weight: .heavy))
-                                            .foregroundStyle(AppTheme.blue)
-                                            .frame(maxWidth: .infinity, alignment: .leading)
-                                            .padding(.horizontal, 14)
-                                        
-                                        NavigationLink {
-                                            RecipeDetailView(recipe: recipe, onToggleFavorite: {
-                                                if authViewModel.guardGuest() { return nil }
-                                                return await viewModel.toggleFavorite(for: recipe)
-                                            })
-                                        } label: {
-                                            DailyTipCardView(recipe: recipe)
-                                        }
-                                        .buttonStyle(.plain)
-                                        .padding(.horizontal, 14)
-                                    }
+                            if viewModel.showsRecipeList || viewModel.dailyTip == nil {
+                                let results = viewModel.filteredRecipes
+                                if results.isEmpty && viewModel.isSearching {
+                                    noSearchResultsView
                                 } else {
-                                    // Fallback: if no dailyTip yet, show list
-                                    LazyVStack(spacing: 16) {
-                                        ForEach(viewModel.filteredRecipes) { recipe in
-                                            NavigationLink {
-                                                RecipeDetailView(recipe: recipe, onToggleFavorite: {
-                                                if authViewModel.guardGuest() { return nil }
-                                                return await viewModel.toggleFavorite(for: recipe)
-                                            })
-                                            } label: {
-                                                RecipeCardView(
-                                                    recipe: recipe,
-                                                    onFavoriteTap: {
-                                                        Task {
-                                                            await viewModel.toggleFavorite(for: recipe)
-                                                        }
-                                                    }
-                                                )
-                                            }
-                                            .buttonStyle(.plain)
-                                        }
-                                    }
+                                    recipeList(results)
                                 }
-                            } else {
-                                LazyVStack(spacing: 16) {
-                                    ForEach(viewModel.filteredRecipes) { recipe in
-                                        NavigationLink {
-                                            RecipeDetailView(recipe: recipe, onToggleFavorite: {
-                                                if authViewModel.guardGuest() { return nil }
-                                                return await viewModel.toggleFavorite(for: recipe)
-                                            })
-                                        } label: {
-                                            RecipeCardView(
-                                                recipe: recipe,
-                                                onFavoriteTap: {
-                                                    if authViewModel.guardGuest() { return }
-                                                    Task {
-                                                        await viewModel.toggleFavorite(for: recipe)
-                                                    }
-                                                }
-                                            )
-                                        }
-                                        .buttonStyle(.plain)
+                            } else if let recipe = viewModel.dailyTip {
+                                VStack(spacing: 16) {
+                                    Text("TIP na dnešní den")
+                                        .font(.system(size: 20, weight: .heavy))
+                                        .foregroundStyle(AppTheme.blue)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .padding(.horizontal, 14)
+                                    
+                                    NavigationLink {
+                                        RecipeDetailView(recipe: recipe, onToggleFavorite: {
+                                            if authViewModel.guardGuest() { return nil }
+                                            return await viewModel.toggleFavorite(for: recipe)
+                                        })
+                                    } label: {
+                                        DailyTipCardView(recipe: recipe)
                                     }
+                                    .buttonStyle(.plain)
+                                    .padding(.horizontal, 14)
                                 }
                             }
                         }
@@ -145,6 +110,7 @@ struct ContentView: View {
                 }
                 .padding(.top, 0)
             }
+            .scrollDismissesKeyboard(.immediately)
             .background(AppTheme.background)
             .autoRefresh {
                 await viewModel.refresh()
@@ -271,6 +237,61 @@ struct ContentView: View {
             Text("Jako host nemůžeš používat některé funkce. Zaregistruj se nebo se přihlas.")
         }
 
+    }
+
+    // MARK: - Seznam receptů a výsledky hledání
+
+    private func recipeList(_ recipes: [Recipe]) -> some View {
+        LazyVStack(spacing: 16) {
+            ForEach(recipes) { recipe in
+                NavigationLink {
+                    RecipeDetailView(recipe: recipe, onToggleFavorite: {
+                        if authViewModel.guardGuest() { return nil }
+                        return await viewModel.toggleFavorite(for: recipe)
+                    })
+                } label: {
+                    RecipeCardView(
+                        recipe: recipe,
+                        onFavoriteTap: {
+                            if authViewModel.guardGuest() { return }
+                            Task {
+                                await viewModel.toggleFavorite(for: recipe)
+                            }
+                        }
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    private var noSearchResultsView: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "magnifyingglass")
+                .font(.largeTitle)
+                .foregroundStyle(AppTheme.mutedText)
+
+            Text("Nic jsme nenašli pro „\(viewModel.searchText.trimmingCharacters(in: .whitespacesAndNewlines))“")
+                .font(.headline)
+                .foregroundStyle(AppTheme.text)
+                .multilineTextAlignment(.center)
+
+            if viewModel.selectedCategory != nil {
+                Text("Hledáš jen v kategorii \(viewModel.selectedCategory ?? ""). Zkus zrušit kategorii klepnutím na logo.")
+                    .font(.subheadline)
+                    .foregroundStyle(AppTheme.mutedText)
+                    .multilineTextAlignment(.center)
+            }
+
+            Button("Zrušit hledání") {
+                viewModel.clearSearch()
+            }
+            .font(.headline)
+            .foregroundStyle(AppTheme.green)
+            .padding(.top, 4)
+        }
+        .padding(.horizontal, 24)
+        .padding(.vertical, 32)
     }
 }
 

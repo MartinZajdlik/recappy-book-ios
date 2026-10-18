@@ -9,6 +9,7 @@ final class RecipeViewModel: ObservableObject {
     @Published var errorMessage: String?
     @Published var selectedCategory: String? = nil
     @Published var dailyTip: Recipe?
+    @Published var searchText = ""
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -36,14 +37,27 @@ final class RecipeViewModel: ObservableObject {
         }
     }
     
+    var isSearching: Bool {
+        !searchText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
+    /// Seznam místo dnešního tipu ukazujeme, když je vybraná kategorie nebo se hledá.
+    var showsRecipeList: Bool {
+        selectedCategory != nil || isSearching
+    }
+
     var filteredRecipes: [Recipe] {
-        guard let selectedCategory else {
-            return recipes
+        let inCategory: [Recipe]
+        if let selectedCategory {
+            inCategory = recipes.filter { $0.category == selectedCategory }
+        } else {
+            inCategory = recipes
         }
-        
-        return recipes.filter { recipe in
-            recipe.category == selectedCategory
-        }
+        return RecipeSearch.filter(inCategory, query: searchText)
+    }
+
+    func clearSearch() {
+        searchText = ""
     }
     
     func selectCategory(_ category: String) {
