@@ -276,13 +276,6 @@ struct ContentView: View {
                 .foregroundStyle(AppTheme.text)
                 .multilineTextAlignment(.center)
 
-            if viewModel.selectedCategory != nil {
-                Text("Hledáš jen v kategorii \(viewModel.selectedCategory ?? ""). Zkus zrušit kategorii klepnutím na logo.")
-                    .font(.subheadline)
-                    .foregroundStyle(AppTheme.mutedText)
-                    .multilineTextAlignment(.center)
-            }
-
             Button("Zrušit hledání") {
                 viewModel.clearSearch()
             }

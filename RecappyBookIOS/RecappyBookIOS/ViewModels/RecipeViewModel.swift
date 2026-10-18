@@ -46,14 +46,15 @@ final class RecipeViewModel: ObservableObject {
         selectedCategory != nil || isSearching
     }
 
+    /// Hledání prohledává vždy všechny recepty, kategorie se při něm ignoruje.
     var filteredRecipes: [Recipe] {
-        let inCategory: [Recipe]
-        if let selectedCategory {
-            inCategory = recipes.filter { $0.category == selectedCategory }
-        } else {
-            inCategory = recipes
+        if isSearching {
+            return RecipeSearch.filter(recipes, query: searchText)
         }
-        return RecipeSearch.filter(inCategory, query: searchText)
+        guard let selectedCategory else {
+            return recipes
+        }
+        return recipes.filter { $0.category == selectedCategory }
     }
 
     func clearSearch() {
@@ -62,6 +63,8 @@ final class RecipeViewModel: ObservableObject {
     
     func selectCategory(_ category: String) {
         selectedCategory = category
+        // Výběr kategorie ruší hledání, ať je jasné, co se zobrazuje.
+        searchText = ""
     }
     
     func clearCategory() {
