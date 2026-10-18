@@ -4,14 +4,14 @@ import SwiftUI
 struct SearchBarView: View {
 
     @Binding var text: String
+    /// Fokus řídí rodič, aby ho mohl zrušit (např. při klepnutí na kategorii).
+    var isFocused: FocusState<Bool>.Binding
     var placeholder: String = "Hledat recept nebo surovinu"
-
-    @FocusState private var isFocused: Bool
 
     var body: some View {
         HStack(spacing: 10) {
             Image(systemName: "magnifyingglass")
-                .foregroundStyle(isFocused ? AppTheme.green : AppTheme.mutedText)
+                .foregroundStyle(isFocused.wrappedValue ? AppTheme.green : AppTheme.mutedText)
 
             TextField(
                 "",
@@ -20,7 +20,7 @@ struct SearchBarView: View {
             )
             .foregroundStyle(AppTheme.text)
             .tint(AppTheme.green)
-            .focused($isFocused)
+            .focused(isFocused)
             .submitLabel(.search)
             .autocorrectionDisabled()
             .textInputAutocapitalization(.never)
@@ -42,13 +42,22 @@ struct SearchBarView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(isFocused ? AppTheme.green.opacity(0.6) : Color.clear, lineWidth: 1)
+                .stroke(isFocused.wrappedValue ? AppTheme.green.opacity(0.6) : Color.clear, lineWidth: 1)
         )
     }
 }
 
+private struct SearchBarPreview: View {
+    @State private var text = ""
+    @FocusState private var isFocused: Bool
+
+    var body: some View {
+        SearchBarView(text: $text, isFocused: $isFocused)
+            .padding()
+            .background(AppTheme.background)
+    }
+}
+
 #Preview {
-    SearchBarView(text: .constant(""))
-        .padding()
-        .background(AppTheme.background)
+    SearchBarPreview()
 }

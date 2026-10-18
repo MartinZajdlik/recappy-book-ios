@@ -6,6 +6,7 @@ struct ContentView: View {
     @StateObject private var viewModel = RecipeViewModel()
     @Environment(\.verticalSizeClass) private var verticalSizeClass
     @State private var showUserMenu = false
+    @FocusState private var isSearchFocused: Bool
     /// Akce z uživatelského menu, které mění celou obrazovku (odhlášení, …), se smí
     /// spustit až po úplném zavření sheetu. Jinak zůstane rozpracovaná prezentace a
     /// textová pole na další obrazovce nepřijmou klávesnici.
@@ -29,6 +30,7 @@ struct ContentView: View {
                         username: authViewModel.isGuest ? "Host" : UserDefaults.standard.string(forKey: "currentUsername"),
                         showUserControls: true,
                         onLogoTap: {
+                            isSearchFocused = false
                             viewModel.clearCategory()
                             viewModel.clearSearch()
                         },
@@ -37,29 +39,29 @@ struct ContentView: View {
                         }
                     )
                     
-                    SearchBarView(text: $viewModel.searchText)
+                    SearchBarView(text: $viewModel.searchText, isFocused: $isSearchFocused)
                         .padding(.horizontal, 14)
 
                     HStack(spacing: 8) {
                         
                         CategoryButtonView(title: "Polévky", icon: "cup.and.saucer.fill", isSelected: !viewModel.isSearching && viewModel.selectedCategory == "Polévky") {
-                            viewModel.selectCategory("Polévky")
+                            selectCategory("Polévky")
                         }
                         
                         CategoryButtonView(title: "Hlavní\njídla", icon: "fork.knife.circle", isSelected: !viewModel.isSearching && viewModel.selectedCategory == "Hlavní jídla") {
-                            viewModel.selectCategory("Hlavní jídla")
+                            selectCategory("Hlavní jídla")
                         }
                         
                         CategoryButtonView(title: "Dezerty", icon: "birthday.cake", isSelected: !viewModel.isSearching && viewModel.selectedCategory == "Dezerty") {
-                            viewModel.selectCategory("Dezerty")
+                            selectCategory("Dezerty")
                         }
                         
                         CategoryButtonView(title: "Snídaně", icon: "frying.pan.fill", isSelected: !viewModel.isSearching && viewModel.selectedCategory == "Snídaně") {
-                            viewModel.selectCategory("Snídaně")
+                            selectCategory("Snídaně")
                         }
                         
                         CategoryButtonView(title: "Ostatní", icon: "takeoutbag.and.cup.and.straw", isSelected: !viewModel.isSearching && viewModel.selectedCategory == "Ostatní") {
-                            viewModel.selectCategory("Ostatní")
+                            selectCategory("Ostatní")
                         }
                     }
                     .padding(.horizontal, 10)
@@ -240,6 +242,12 @@ struct ContentView: View {
             Text("Jako host nemůžeš používat některé funkce. Zaregistruj se nebo se přihlas.")
         }
 
+    }
+
+    /// Klepnutí na kategorii ukončí psaní do vyhledávání (schová klávesnici i zelený rámeček).
+    private func selectCategory(_ category: String) {
+        isSearchFocused = false
+        viewModel.selectCategory(category)
     }
 
     private func runPendingMenuAction() {
