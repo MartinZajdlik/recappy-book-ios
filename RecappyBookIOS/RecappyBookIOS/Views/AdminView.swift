@@ -12,6 +12,8 @@ struct AdminView: View {
     @State private var showAddRecipe = false
     @State private var showMyRecipes = false
     @State private var showBlockedUsers = false
+    /// Obrazovka otevřená z uživatelského menu – po návratu zpět se menu znovu otevře.
+    @State private var returnToMenu = false
     @State private var pendingCount = 0
     @State private var reportedCount = 0
     @State private var recipesRefreshToken = UUID()
@@ -98,6 +100,15 @@ struct AdminView: View {
                 await loadReportedCount()
             }
         }
+        .onChange(of: showMyRecipes) { _, isPresented in
+            if !isPresented { reopenMenuIfNeeded() }
+        }
+        .onChange(of: showMealPlan) { _, isPresented in
+            if !isPresented { reopenMenuIfNeeded() }
+        }
+        .onChange(of: showBlockedUsers) { _, isPresented in
+            if !isPresented { reopenMenuIfNeeded() }
+        }
         .sheet(isPresented: $showUserMenu, onDismiss: runPendingMenuAction) {
             UserMenuView(
                 username: UserDefaults.standard.string(forKey: "currentUsername") ?? "",
@@ -107,14 +118,17 @@ struct AdminView: View {
                     showAddRecipe = true
                 },
                 onMyRecipes: {
+                    returnToMenu = true
                     showMyRecipes = true
                 },
                 onFavoriteRecipes: {
                 },
                 onMealPlan: {
+                    returnToMenu = true
                     showMealPlan = true
                 },
                 onBlockedUsers: {
+                    returnToMenu = true
                     showBlockedUsers = true
                 },
                 onDeleteProfile: {
@@ -169,6 +183,17 @@ struct AdminView: View {
     }
 
     /// Obnoví otevřenou záložku (přes `reloadTrigger`) i počty na štítcích.
+    /// Po návratu z obrazovky otevřené z menu menu znovu otevře. Malé zpoždění,
+    /// ať se sheet neotvírá uprostřed animace návratu.
+    private func reopenMenuIfNeeded() {
+        guard returnToMenu else { return }
+        returnToMenu = false
+        Task {
+            try? await Task.sleep(for: .milliseconds(350))
+            showUserMenu = true
+        }
+    }
+
     private func runPendingMenuAction() {
         let action = pendingMenuAction
         pendingMenuAction = nil

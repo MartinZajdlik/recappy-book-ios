@@ -17,6 +17,8 @@ struct ContentView: View {
     @State private var showFavoriteRecipes = false
     @State private var showMealPlan = false
     @State private var showBlockedUsers = false
+    /// Obrazovka otevřená z uživatelského menu – po návratu zpět se menu znovu otevře.
+    @State private var returnToMenu = false
     
     var body: some View {
         
@@ -154,18 +156,22 @@ struct ContentView: View {
                 },
                 onMyRecipes: {
                     if authViewModel.guardGuest() { return }
+                    returnToMenu = true
                     showMyRecipes = true
                 },
                 onFavoriteRecipes: {
                     if authViewModel.guardGuest() { return }
+                    returnToMenu = true
                     showFavoriteRecipes = true
                 },
                 onMealPlan: {
                     if authViewModel.guardGuest() { return }
+                    returnToMenu = true
                     showMealPlan = true
                 },
                 onBlockedUsers: {
                     if authViewModel.guardGuest() { return }
+                    returnToMenu = true
                     showBlockedUsers = true
                 },
                 onDeleteProfile: {
@@ -210,6 +216,7 @@ struct ContentView: View {
                 Task {
                     await viewModel.loadRecipes()
                 }
+                reopenMenuIfNeeded()
             }
         }
         .onChange(of: showFavoriteRecipes) { _, isPresented in
@@ -217,7 +224,14 @@ struct ContentView: View {
                 Task {
                     await viewModel.loadRecipes()
                 }
+                reopenMenuIfNeeded()
             }
+        }
+        .onChange(of: showMealPlan) { _, isPresented in
+            if !isPresented { reopenMenuIfNeeded() }
+        }
+        .onChange(of: showBlockedUsers) { _, isPresented in
+            if !isPresented { reopenMenuIfNeeded() }
         }
         
         .alert("Smazat účet?", isPresented: $showDeleteProfileAlert) {
@@ -248,6 +262,17 @@ struct ContentView: View {
     private func selectCategory(_ category: String) {
         isSearchFocused = false
         viewModel.selectCategory(category)
+    }
+
+    /// Po návratu z obrazovky otevřené z menu menu znovu otevře. Malé zpoždění,
+    /// ať se sheet neotvírá uprostřed animace návratu.
+    private func reopenMenuIfNeeded() {
+        guard returnToMenu else { return }
+        returnToMenu = false
+        Task {
+            try? await Task.sleep(for: .milliseconds(350))
+            showUserMenu = true
+        }
     }
 
     private func runPendingMenuAction() {

@@ -1,0 +1,364 @@
+{
+  "sourceLanguage" : "cs",
+  "strings" : {
+    "" : {
+
+    },
+    "·" : {
+
+    },
+    "„Někteří lidé jedí, aby žili. My žijeme, abychom jedli.“" : {
+
+    },
+    "%lld" : {
+
+    },
+    "%lld/%lld" : {
+      "localizations" : {
+        "cs" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld/%2$lld"
+          }
+        }
+      }
+    },
+    "•" : {
+
+    },
+    "© RecAPPy Book — Martin Žajdlík © 2025" : {
+
+    },
+    "🚩 %lld×" : {
+
+    },
+    "99+" : {
+
+    },
+    "ADMIN" : {
+
+    },
+    "Autor:" : {
+
+    },
+    "Autor: %@" : {
+
+    },
+    "B O O K" : {
+
+    },
+    "čeká na schválení" : {
+
+    },
+    "Displej svítí" : {
+
+    },
+    "Důvod" : {
+
+    },
+    "Důvod nebyl uveden." : {
+
+    },
+    "Důvod: %@" : {
+
+    },
+    "Ingredience" : {
+
+    },
+    "Ingredience oddělené čárkou" : {
+
+    },
+    "Ingredience odděluj čárkou, např.: mouka, cukr, vejce" : {
+
+    },
+    "Jako host nemůžeš používat některé funkce. Zaregistruj se nebo se přihlas." : {
+
+    },
+    "Jeho recepty se ti přestanou zobrazovat." : {
+
+    },
+    "Jeho recepty se ti znovu začnou zobrazovat." : {
+
+    },
+    "Jídelníček" : {
+
+    },
+    "Jsi přihlášen/a jako host" : {
+
+    },
+    "Kategorie" : {
+
+    },
+    "Kategorie:" : {
+
+    },
+    "Kategorie: %@" : {
+
+    },
+    "Kontakt: recappybook@gmail.com" : {
+
+    },
+    "Moje recepty" : {
+
+    },
+    "Načítám recepty..." : {
+
+    },
+    "Nahlášené recepty" : {
+
+    },
+    "Nahlásili" : {
+
+    },
+    "Nahlásit" : {
+
+    },
+    "Nahlásit recept" : {
+
+    },
+    "Napiš autorovi, proč recept neprošel. Uvidí to u svého receptu a může ho opravit a poslat znovu." : {
+
+    },
+    "Nastavení účtu" : {
+
+    },
+    "Název receptu" : {
+
+    },
+    "Nezhasínat" : {
+
+    },
+    "Nic jsme nenašli pro „%@“" : {
+
+    },
+    "Nikoho jsi nezablokoval/a." : {
+
+    },
+    "Oblíbené recepty" : {
+
+    },
+    "Obrázek se nepodařilo načíst" : {
+
+    },
+    "Obrázek vybrán" : {
+
+    },
+    "Ochrana osobních údajů" : {
+
+    },
+    "Odblokovat" : {
+
+    },
+    "Odebrat z oblíbených" : {
+
+    },
+    "OK" : {
+
+    },
+    "Opravdu chceš přidat nový recept?" : {
+
+    },
+    "Opravdu chceš smazat svůj účet? Smažou se také všechny tvoje recepty. Tuto akci nelze vrátit." : {
+
+    },
+    "Opravdu chceš smazat tento recept?" : {
+
+    },
+    "Opravdu chceš smazat tohoto uživatele?" : {
+
+    },
+    "Opravdu chceš tento recept smazat? Tuto akci nejde vrátit zpět." : {
+
+    },
+    "Opravdu chceš uložit změny receptu?" : {
+
+    },
+    "Opravdu chceš změnit roli uživatele?" : {
+
+    },
+    "Opravdu nahlásit tento recept?" : {
+
+    },
+    "Opravdu odblokovat uživatele %@?" : {
+
+    },
+    "Opravdu zablokovat uživatele %@?" : {
+
+    },
+    "Podmínky použití" : {
+
+    },
+    "Pokračovat jako host" : {
+
+    },
+    "Pokud recept neupravíš, bude %@ automaticky smazán." : {
+
+    },
+    "Ponechat" : {
+
+    },
+    "Poslat odkaz pro reset" : {
+
+    },
+    "Postup" : {
+
+    },
+    "Potvrdit" : {
+
+    },
+    "Přidat" : {
+
+    },
+    "Přidat do oblíbených" : {
+
+    },
+    "Přidat recept" : {
+
+    },
+    "Přidat recept?" : {
+
+    },
+    "PŘIHLÁŠEN JAKO" : {
+
+    },
+    "Přihlásit" : {
+
+    },
+    "Přihlásit se" : {
+
+    },
+    "RecAPPy" : {
+
+    },
+    "Recept byl zamítnut" : {
+
+    },
+    "Recept od %@" : {
+
+    },
+    "Recept prověří administrátor appky." : {
+
+    },
+    "Recepty ke schválení" : {
+
+    },
+    "Registrovat" : {
+
+    },
+    "Rychlá volba" : {
+
+    },
+    "Schválit" : {
+
+    },
+    "Smazat" : {
+
+    },
+    "Smazat hledání" : {
+
+    },
+    "Smazat profil" : {
+
+    },
+    "Smazat recept?" : {
+
+    },
+    "Smazat účet?" : {
+
+    },
+    "Smazat uživatele?" : {
+
+    },
+    "Smaže tvůj účet, všechny tvoje recepty, oblíbené a jídelníček. Tuto akci nelze vrátit." : {
+
+    },
+    "Správa receptů" : {
+
+    },
+    "Správa uživatelů" : {
+
+    },
+    "TIP na dnešní den" : {
+
+    },
+    "Uložit" : {
+
+    },
+    "Uložit změny" : {
+
+    },
+    "Uložit změny?" : {
+
+    },
+    "Uprav recept a ulož ho – znovu se odešle ke schválení." : {
+
+    },
+    "Upravit" : {
+
+    },
+    "Upravit recept" : {
+
+    },
+    "USER" : {
+
+    },
+    "Vybrat obrázek" : {
+
+    },
+    "Zablokovaní uživatelé" : {
+
+    },
+    "Zablokovat" : {
+
+    },
+    "Zablokovat uživatele" : {
+
+    },
+    "Žádné nevyřízené nahlášení." : {
+
+    },
+    "Žádné recepty čekající na schválení." : {
+
+    },
+    "Zamítnout" : {
+
+    },
+    "Zamítnout „%@“" : {
+
+    },
+    "Zamítnout recept" : {
+
+    },
+    "zamítnuto" : {
+
+    },
+    "Zapomněli jste heslo?" : {
+
+    },
+    "Zatím nemáš žádné oblíbené recepty." : {
+
+    },
+    "Zavřít" : {
+
+    },
+    "Zkusit znovu" : {
+
+    },
+    "Změnit roli?" : {
+
+    },
+    "Zobrazit" : {
+
+    },
+    "Zpět" : {
+
+    },
+    "Zrušit" : {
+
+    },
+    "Zrušit hledání" : {
+
+    }
+  },
+  "version" : "1.3"
+}
